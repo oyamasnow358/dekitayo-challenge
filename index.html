@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="できたよ">
+<meta name="theme-color" content="#F1F8FF">
+<title>できたよ チャレンジ｜MieeL</title>
+<link rel="apple-touch-icon" id="touchIcon" href="">
+<style>
+  /* ============================================================
+     できたよ チャレンジ  見た目（CSS）
+     ============================================================ */
+  :root {
+    --mieel: radial-gradient(circle at 50% 0%,#1B8FE8 0%,#2BB8D6 28%,#3FCB9E 45%,#8FD24A 58%,#F4D027 72%,#F7941E 100%);
+    --bg: #F1F8FF; --ink: #1F2937; --sub: #6B7280; --line: #D6E4F0;
+    --go: #2F9E44; --go-d: #237A34; --main: #1C7ED6; --main-d: #1864AB; --orange: #F76707;
+    --yellow: #FFD43B; --gold: #FAB005; --pink: #F06595; --violet: #7048E8;
+    --emoji: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", "BIZ UDPGothic", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+    font-weight: 700; word-break: keep-all; overflow-wrap: anywhere; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    touch-action: manipulation; overscroll-behavior: none;
+    display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
+
+  /* ---------- 上のバー ---------- */
+  .topbar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; min-height: 76px; }
+  .chip { display: flex; align-items: center; gap: 8px; padding: 4px 18px 4px 8px; border-radius: 999px; background: #fff; border: 3px solid var(--line); font-size: 22px; }
+  .chip .ic { font-size: 34px; line-height: 1; font-family: var(--emoji); }
+  .chip[hidden] { display: none; }
+  .brand { flex: 1; display: flex; justify-content: center; align-items: center; gap: 14px; color: #8AA4BF; font-size: 16px; letter-spacing: .1em; }
+  .mieel-brand { display: flex; align-items: center; gap: 7px; white-space: nowrap; flex: none; }
+  .orb-mini { width: 22px; height: 22px; border-radius: 50%; background: var(--mieel); flex: none; }
+  .mieel-brand strong { font-size: 16px; color: var(--ink); letter-spacing: .02em; }
+  .mieel-brand .url { font-size: 12px; color: var(--sub); font-weight: 600; }
+  .mieel-foot { margin-top: 28px; padding-top: 16px; border-top: 1px solid #E9ECEF; text-align: center; color: var(--sub); font-size: 13px; line-height: 1.8; }
+  .mieel-foot .mieel-brand { justify-content: center; }
+  .mieel-foot a { color: var(--main); font-weight: 700; text-decoration: none; font-size: 14px; }
+  @media (max-width: 699px) { .topbar .mieel-brand .url { display: none; } }
+  .gear { position: relative; width: 52px; height: 52px; border-radius: 50%; border: none; background: transparent; opacity: .35; font-size: 26px; display: grid; place-items: center; }
+  .gear::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; border: 4px solid transparent; }
+  .gear.pressing { opacity: 1; }
+  .gear.pressing::after { border-color: var(--main); animation: ring 1.5s linear forwards; }
+  @keyframes ring { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+  main { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 20px 20px; }
+  .screen { flex: 1; display: flex; flex-direction: column; min-height: 0; animation: fadein .25s ease-out; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes shake { 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+  .shake { animation: shake .45s; }
+  .title { font-size: clamp(30px, 4.6vw, 52px); text-align: center; margin: 0 0 clamp(8px, 2vh, 16px); }
+
+  .pic { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .pic img { width: 100%; height: 100%; object-fit: contain; border-radius: 16px; }
+  .pic .emoji { font-family: var(--emoji); line-height: 1; font-size: clamp(48px, 8vw, 90px); font-weight: 400; }
+  .pic .letter { width: 1.6em; height: 1.6em; border-radius: 50%; display: grid; place-items: center; background: var(--main); color: #fff; font-size: clamp(28px, 4vw, 52px); }
+
+  .actions { display: flex; gap: 18px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .big-btn { min-width: min(400px, 78vw); min-height: 96px; padding: 0 40px; border: none; border-radius: 999px; color: #fff; font-size: clamp(28px, 3.8vw, 44px); display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .big-btn.go { background: var(--go); box-shadow: 0 8px 0 var(--go-d); }
+  .big-btn.blue { background: var(--main); box-shadow: 0 8px 0 var(--main-d); }
+  .big-btn:active { transform: translateY(6px); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+  .big-btn.dim { opacity: .45; }
+  .round-btn { width: 88px; height: 88px; border-radius: 50%; border: 4px solid var(--line); background: #fff; font-size: 40px; box-shadow: 0 5px 0 var(--line); display: grid; place-items: center; }
+  .round-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--line); }
+  .back-btn { height: 68px; padding: 0 26px; border-radius: 999px; border: 4px solid #ADB5BD; background: #fff; color: #495057; font-size: 24px; box-shadow: 0 5px 0 #DEE2E6; }
+
+  /* ---------- だれ？／どれ？ ---------- */
+  .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; overflow-y: auto; flex: 1; align-content: start; padding: 6px; }
+  .pcard { background: #fff; border: 6px solid var(--line); border-radius: 30px; padding: 18px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: clamp(22px, 2.6vw, 30px); box-shadow: 0 6px 0 rgba(0,0,0,.08); text-align: center; }
+  .pcard .ic { font-size: clamp(64px, 8vw, 96px); line-height: 1.1; font-family: var(--emoji); font-weight: 400; }
+  .pcard small { font-size: 16px; color: var(--sub); }
+  .pcard.done { border-color: var(--gold); background: #FFF9DB; }
+  .pcard:active { transform: translateY(4px); }
+
+  /* ---------- スタート（見とおし） ---------- */
+  .start { justify-content: center; align-items: center; gap: clamp(8px, 1.6vh, 16px); }
+  .sched { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: 1100px; }
+  .scard { width: clamp(124px, 14vw, 170px); background: #fff; border: 5px solid var(--main); border-radius: 22px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; box-shadow: 0 5px 0 rgba(0,0,0,.07); }
+  .scard .no { position: absolute; top: -12px; left: -10px; width: 34px; height: 34px; border-radius: 50%; background: var(--main); color: #fff; display: grid; place-items: center; font-size: 18px; }
+  .scard .pic { width: 100%; height: clamp(58px, 10vh, 96px); }
+  .scard .pic .emoji { font-size: clamp(46px, min(6vw, 8vh), 74px); }
+  .scard .nm { font-size: clamp(15px, 1.7vw, 19px); text-align: center; line-height: 1.3; }
+  .scard .cnt { font-size: 15px; color: var(--sub); }
+  .then { font-size: clamp(24px, 3vw, 36px); color: var(--pink); }
+  .reward-box { background: #fff; border-radius: 30px; border: 5px dashed var(--pink); padding: 10px 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 100%; }
+  .rlabel { font-size: clamp(20px, 2.6vw, 28px); }
+  .rgrid { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .rcard { width: clamp(120px, 14vw, 170px); border: 5px solid #F8D7E3; border-radius: 24px; background: #FFF5F9; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: clamp(17px, 2vw, 22px); text-align: center; transition: transform .15s; }
+  .rcard .pic { width: 100%; height: clamp(56px, 9vh, 96px); }
+  .rcard .pic .emoji { font-size: clamp(48px, min(6vw, 8vh), 76px); }
+  .rcard.sel { border-color: var(--pink); background: #FFDEEB; transform: scale(1.07); box-shadow: 0 0 0 5px var(--ink); }
+  .rcard.fixed { border-color: var(--pink); }
+  .empty-msg { flex: 1; display: grid; place-items: center; text-align: center; font-size: 28px; line-height: 1.8; color: var(--sub); }
+  .empty-msg small { display: block; font-size: 20px; }
+
+  /* ---------- じゅんばん・かいすう ---------- */
+  .play { gap: clamp(6px, 1.2vh, 12px); }
+  .mission-bar { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .mtext { font-size: clamp(28px, 4vw, 48px); text-align: center; }
+  .remain { font-size: clamp(22px, 2.8vw, 32px); background: var(--ink); color: #fff; border-radius: 999px; padding: 6px 22px; white-space: nowrap; }
+  .remain.last { background: var(--orange); animation: pulse 1s ease-in-out infinite alternate; }
+  @keyframes pulse { to { transform: scale(1.08); } }
+  .track { position: relative; display: flex; align-items: center; padding: clamp(46px, 7vh, 62px) 8px 6px; }
+  .stop { flex: 1; display: flex; justify-content: center; position: relative; min-width: 0; }
+  .stop::before { content: ""; position: absolute; top: 50%; right: 50%; width: 100%; height: 8px; background: var(--line); transform: translateY(-50%); border-radius: 8px; }
+  .stop:first-child::before { display: none; }
+  .stop.done::before { background: var(--gold); }
+  .dot { position: relative; z-index: 1; width: clamp(32px, 5.2vw, 64px); aspect-ratio: 1; border-radius: 50%; background: #fff; border: 5px solid var(--line); display: grid; place-items: center; font-size: clamp(15px, 2.6vw, 32px); line-height: 1; font-family: var(--emoji); font-weight: 400; overflow: hidden; }
+  .dot img { width: 100%; height: 100%; object-fit: cover; }
+  .dot > span { filter: grayscale(1); opacity: .55; }
+  .stop.done .dot { border-color: var(--gold); background: #FFF3BF; }
+  .stop.done .dot > span, .stop.start .dot > span, .stop.now .dot > span { filter: none; opacity: 1; }
+  .stop.now .dot { border-color: var(--main); box-shadow: 0 0 0 4px rgba(28,126,214,.25); }
+  .stop.goal .dot { width: clamp(42px, 6.6vw, 80px); border-color: var(--pink); }
+  .stop.goal.done .dot { background: #FFDEEB; }
+  .stop.goal .dot > span { filter: none; opacity: 1; }
+  .stop.justdone .dot { animation: pop .5s cubic-bezier(.2, 1.6, .4, 1); }
+  .runner { position: absolute; top: 2px; left: 0; transform: translateX(-50%); font-size: clamp(36px, 5.6vw, 62px); line-height: 1; transition: left .6s cubic-bezier(.3, 1.4, .5, 1); font-family: var(--emoji); z-index: 2; font-weight: 400; }
+  .runner.hop { animation: hop .6s ease-out; }
+  @keyframes hop { 35% { top: -34px; } 70% { top: 6px; } }
+  .pbar { height: 30px; border-radius: 15px; background: #fff; border: 4px solid var(--line); overflow: hidden; margin: 6px 8px; position: relative; }
+  .pbar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #FFE066, var(--gold)); transition: width .5s; }
+  .pbar b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 16px; }
+
+  .play-main { flex: 1; display: flex; gap: clamp(16px, 4vw, 56px); align-items: center; justify-content: center; min-height: 0; }
+  .act-card { width: min(38vw, 44vh, 420px); aspect-ratio: 1; background: #fff; border: 8px solid var(--main); border-radius: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; box-shadow: 0 8px 0 rgba(0,0,0,.08); }
+  .act-card .pic { width: 100%; flex: 1; min-height: 0; }
+  .act-card .pic .emoji { font-size: clamp(90px, min(16vw, 21vh), 210px); }
+  .act-card .aname { font-size: clamp(24px, 3.2vw, 40px); text-align: center; line-height: 1.3; }
+  .done-btn { position: relative; width: min(36vw, 44vh, 400px); aspect-ratio: 1; border-radius: 50%; border: none; color: #fff; background: radial-gradient(circle at 35% 28%, #69DB7C, #2F9E44 70%); box-shadow: 0 12px 0 var(--go-d), 0 20px 34px rgba(47, 158, 68, .3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; overflow: hidden; }
+  .done-btn .bemoji { font-size: clamp(60px, min(9vw, 11vh), 120px); line-height: 1; font-family: var(--emoji); font-weight: 400; }
+  .done-btn .blabel { font-size: clamp(32px, min(5vw, 6.5vh), 64px); text-shadow: 0 3px 0 rgba(0,0,0,.15); }
+  .done-btn:active { transform: translateY(8px); box-shadow: 0 4px 0 var(--go-d); }
+  .done-btn.locked { filter: saturate(.3) brightness(1.08); }
+  .done-btn::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: rgba(255,255,255,.4); }
+  .done-btn.holding::after { animation: holdfill .7s linear forwards; }
+  @keyframes holdfill { to { height: 100%; } }
+  .done-btn .holdhint { font-size: 16px; opacity: .9; }
+
+  .play-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; }
+  .undo { position: relative; border: none; background: transparent; font-size: 17px; padding: 12px 14px; opacity: .45; border-radius: 12px; }
+  .undo.pressing { opacity: 1; background: #fff; }
+  .reward-mini { display: flex; align-items: center; gap: 8px; font-size: 20px; background: #fff; border: 3px dashed var(--pink); border-radius: 999px; padding: 4px 18px 4px 6px; }
+  .reward-mini .pic { width: 46px; height: 46px; }
+  .reward-mini .pic .emoji { font-size: 34px; }
+
+  /* じかんの めやす（えんばん） */
+  .tmr { display: flex; align-items: center; gap: 8px; font-size: 20px; background: #fff; border-radius: 999px; padding: 4px 16px 4px 4px; border: 3px solid var(--line); }
+  .tmr svg { width: 46px; height: 46px; }
+  .tmr.over { border-color: var(--orange); }
+
+  /* ---------- もちもの チェック ---------- */
+  .pack-main { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(14px, 3vw, 36px); align-items: center; min-height: 0; }
+  .items { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 17vw, 210px), 1fr)); gap: 14px; align-content: center; overflow-y: auto; padding: 8px; max-height: 100%; }
+  .icard { position: relative; background: #fff; border: 6px solid var(--main); border-radius: 26px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 6px 0 var(--main-d); }
+  .icard .pic { width: 100%; height: clamp(80px, 14vh, 140px); }
+  .icard .pic .emoji { font-size: clamp(64px, min(9vw, 11vh), 110px); }
+  .icard .nm { font-size: clamp(19px, 2.3vw, 26px); text-align: center; line-height: 1.25; }
+  .icard:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--main-d); }
+  .icard.ok { border-color: var(--go); background: #EBFBEE; box-shadow: none; transform: none; }
+  .icard.ok .pic { opacity: .35; }
+  .icard.ok::after { content: "✔"; position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(60px, 9vw, 100px); color: var(--go); text-shadow: 0 3px 0 #fff; }
+  .bagbox { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .bag { font-family: var(--emoji); font-weight: 400; font-size: clamp(130px, min(20vw, 28vh), 240px); line-height: 1; transition: transform .2s; }
+  .bag.bump { animation: bump .45s cubic-bezier(.2, 1.6, .4, 1); }
+  @keyframes bump { 40% { transform: scale(1.15) rotate(-4deg); } }
+  .bagcnt { font-size: clamp(24px, 3vw, 34px); background: var(--ink); color: #fff; border-radius: 999px; padding: 6px 22px; }
+  .flyitem { position: fixed; z-index: 41; pointer-events: none; font-family: var(--emoji); font-weight: 400; transition: transform .55s cubic-bezier(.5, -0.3, .7, 1), opacity .55s; }
+
+  /* ほめる演出 */
+  .praise { position: fixed; left: 50%; top: 40%; transform: translate(-50%, -50%); font-size: clamp(60px, 10vw, 130px); font-weight: 900; color: var(--orange); white-space: nowrap; -webkit-text-stroke: 5px #fff; paint-order: stroke fill; text-shadow: 0 6px 0 rgba(0,0,0,.12); pointer-events: none; z-index: 40; animation: praise 1.2s ease-out forwards; }
+  @keyframes praise { 0% { transform: translate(-50%, -50%) scale(.3); opacity: 0; } 22% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; } 70% { transform: translate(-50%, -54%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -70%) scale(1); opacity: 0; } }
+  .fly { position: fixed; font-size: 46px; pointer-events: none; z-index: 39; animation: fly .9s ease-out forwards; font-family: var(--emoji); }
+  @keyframes fly { to { transform: translate(var(--dx), var(--dy)) scale(.5) rotate(var(--r)); opacity: 0; } }
+  .confetti { position: fixed; top: -50px; pointer-events: none; z-index: 38; animation: fall linear forwards; font-family: var(--emoji); }
+  @keyframes fall { to { transform: translateY(115vh) rotate(var(--r)); } }
+  .overlay { position: fixed; inset: 0; background: rgba(241, 248, 255, .93); display: grid; place-items: center; z-index: 45; animation: fadein .2s; }
+  .ov-card { background: #fff; border: 8px solid var(--gold); border-radius: 40px; padding: 28px 48px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; animation: pop .45s cubic-bezier(.2, 1.4, .4, 1); max-width: 92vw; }
+  .ov-card .big { font-size: clamp(36px, 5.4vw, 64px); color: var(--go); }
+  .ov-card .next { font-size: clamp(24px, 3.2vw, 38px); }
+  .ov-card .pic { width: clamp(120px, 22vh, 190px); height: clamp(120px, 22vh, 190px); }
+  .ov-card .pic .emoji { font-size: clamp(90px, 16vh, 150px); }
+
+  /* ---------- クリア ---------- */
+  .goal { justify-content: center; align-items: center; gap: clamp(8px, 2vh, 20px); text-align: center; }
+  .goal h1 { font-size: clamp(48px, 8vw, 100px); margin: 0; color: var(--orange); -webkit-text-stroke: 3px #fff; paint-order: stroke fill; }
+  .goal .sub { font-size: clamp(24px, 3.2vw, 38px); }
+  .goal-row { display: flex; gap: clamp(16px, 4vw, 48px); align-items: stretch; flex-wrap: wrap; justify-content: center; }
+  .gbox { background: #fff; border-radius: 32px; border: 6px solid var(--pink); padding: 14px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 250px; animation: pop .5s cubic-bezier(.2, 1.4, .4, 1) both; }
+  .gbox.st { border-color: var(--gold); animation-delay: .25s; }
+  .gbox .lbl { font-size: clamp(20px, 2.6vw, 28px); color: var(--sub); }
+  .gbox .pic { width: clamp(110px, 20vh, 180px); height: clamp(110px, 20vh, 180px); }
+  .gbox .pic .emoji { font-size: clamp(90px, 16vh, 150px); }
+  .gbox .nm { font-size: clamp(26px, 3.4vw, 42px); }
+  .sticker-big { font-size: clamp(100px, 18vh, 160px); line-height: 1.1; animation: spinin 1.1s cubic-bezier(.2, 1.3, .4, 1) .3s both; font-family: var(--emoji); font-weight: 400; }
+  @keyframes spinin { from { transform: rotate(-540deg) scale(0); } to { transform: none; } }
+  .goal .time { font-size: 20px; color: var(--sub); }
+
+  /* ---------- シールちょう ---------- */
+  .book { gap: 12px; }
+  .book-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .book-head h1 { flex: 1; margin: 0; text-align: center; font-size: clamp(28px, 4vw, 48px); }
+  .count { font-size: 22px; background: #fff; border-radius: 999px; padding: 6px 18px; border: 3px solid var(--gold); }
+  .sgrid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: clamp(8px, 1.2vw, 14px); overflow-y: auto; flex: 1; align-content: start; padding: 4px; }
+  .slot { aspect-ratio: 1; border-radius: 22px; background: #fff; border: 4px solid var(--line); display: grid; place-items: center; font-size: clamp(34px, min(5vw, 7vh), 66px); position: relative; font-family: var(--emoji); }
+  .slot.no { background: #E7EEF5; color: #B9C7D6; font-size: clamp(26px, 3.6vw, 44px); font-family: inherit; }
+  .slot .n { position: absolute; right: 6px; bottom: 4px; font-size: 15px; background: var(--ink); color: #fff; border-radius: 999px; padding: 0 8px; font-family: inherit; }
+  .slot.new { border-color: var(--gold); box-shadow: 0 0 0 5px #FFE066; animation: pop .6s cubic-bezier(.2, 1.6, .4, 1); }
+
+  body.calm *, body.calm *::before, body.calm *::after { animation: none !important; transition: none !important; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  @media (orientation: portrait) {
+    .play-main { flex-direction: column; gap: 18px; }
+    .act-card { width: min(56vw, 30vh, 380px); }
+    .done-btn { width: min(62vw, 32vh, 380px); }
+    .pack-main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+    .bag { font-size: clamp(100px, 16vh, 170px); }
+    .sgrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  }
+
+  /* ---------- 先生用：設定 ---------- */
+  .modal { position: fixed; inset: 0; z-index: 50; background: rgba(17, 24, 39, .55); display: none; align-items: flex-start; justify-content: center; padding: 24px 12px; overflow-y: auto; -webkit-user-select: text; user-select: text; }
+  .modal.open { display: flex; }
+  .panel { width: min(100%, 860px); background: #fff; border-radius: 24px; padding: 22px clamp(16px, 4vw, 32px) 28px; font-weight: 400; font-size: 17px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .panel h2 { margin: 0; font-size: 25px; font-weight: 700; }
+  .panel h3 { margin: 28px 0 10px; font-size: 20px; font-weight: 700; padding-left: 10px; border-left: 6px solid var(--main); }
+  .panel h4 { margin: 18px 0 6px; font-size: 17px; font-weight: 700; }
+  .note { color: var(--sub); font-size: 15px; line-height: 1.6; margin: 6px 0; }
+  .panel label.row { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 0; border-bottom: 1px solid #F1F3F5; }
+  .panel label.row > span:first-child { flex: 1; }
+  .panel input[type=text], .panel input[type=search], .panel select { font: inherit; font-size: 17px; padding: 10px 12px; border: 2px solid #CED4DA; border-radius: 12px; background: #fff; -webkit-user-select: text; user-select: text; }
+  .panel input[type=text], .panel input[type=search] { width: 100%; }
+  .panel input[type=checkbox] { width: 30px; height: 30px; accent-color: var(--go); }
+  .panel input[type=range] { width: 220px; accent-color: var(--main); }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 12px; padding: 11px 18px; font-size: 16px; font-weight: 700; background: #E9ECEF; color: var(--ink); cursor: pointer; }
+  .btn.primary { background: var(--main); color: #fff; }
+  .btn.ok { background: var(--go); color: #fff; }
+  .btn.warn { background: #FFF0F0; color: #C92A2A; }
+  .seg { display: flex; gap: 8px; flex-wrap: wrap; }
+  .seg button { flex: 1; min-width: 140px; padding: 12px 8px; font-size: 16px; font-weight: 700; border-radius: 12px; border: 2px solid #CED4DA; background: #fff; }
+  .seg button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .seg button small { display: block; font-size: 12px; font-weight: 400; opacity: .8; }
+  .elist { display: grid; gap: 8px; }
+  .erow { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #fff; border: 1px solid #E9ECEF; border-radius: 14px; flex-wrap: wrap; }
+  .erow .pic { width: 52px; height: 52px; }
+  .erow .pic .emoji { font-size: 36px; }
+  .erow .pic .letter { font-size: 22px; }
+  .ename { flex: 1; min-width: 90px; font-weight: 700; }
+  .stepper { display: flex; align-items: center; gap: 6px; }
+  .stepper button { width: 44px; height: 44px; border-radius: 12px; border: 2px solid #CED4DA; background: #fff; font-size: 22px; font-weight: 700; }
+  .stepper b { min-width: 64px; text-align: center; }
+  .mini { width: 44px; height: 44px; border-radius: 12px; border: none; background: #F1F3F5; font-size: 18px; }
+  .mini.warn { background: #FFF0F0; color: #C92A2A; }
+  .picker { margin-top: 10px; padding: 12px; background: #F8F9FA; border-radius: 16px; display: grid; gap: 12px; }
+  .cats { display: flex; gap: 6px; flex-wrap: wrap; }
+  .cats button { border: 2px solid #DEE2E6; background: #fff; border-radius: 999px; padding: 8px 12px; font-size: 15px; font-weight: 700; }
+  .cats button.on { border-color: var(--main); background: #E7F5FF; color: var(--main-d); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+  .tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; border: 3px solid #E9ECEF; border-radius: 14px; background: #fff; font-size: 14px; font-weight: 700; text-align: center; line-height: 1.3; }
+  .tile .pic { width: 48px; height: 48px; }
+  .tile .pic .emoji { font-size: 34px; }
+  .tile .pic .letter { font-size: 20px; }
+  .tile.on { border-color: var(--ink); background: #FFF9DB; }
+  .tile .x { position: absolute; top: 0; right: 2px; font-size: 13px; color: #C92A2A; padding: 4px 6px; }
+  .tile .badge { position: absolute; top: 2px; left: 4px; font-size: 12px; color: var(--go); }
+  .cform { display: grid; gap: 8px; background: #fff; border-radius: 14px; padding: 12px; border: 1px dashed #CED4DA; }
+  .cform-t { font-weight: 700; }
+  .f { display: grid; gap: 4px; }
+  .f > span { font-size: 14px; color: var(--sub); }
+  .photo-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .photo-prev { width: 84px; height: 84px; border-radius: 14px; border: 2px dashed #CED4DA; background: #fff center / cover no-repeat; display: grid; place-items: center; color: #ADB5BD; font-size: 13px; }
+  .emoji-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ebtn { width: 58px; height: 58px; border-radius: 14px; border: 3px solid #E9ECEF; background: #fff; font-size: 32px; font-family: var(--emoji); }
+  .ebtn.on { border-color: var(--ink); background: #FFF9DB; }
+  .status { margin-top: 8px; padding: 10px 14px; border-radius: 12px; background: #F8F9FA; font-size: 15px; line-height: 1.7; }
+  .chlist { display: grid; gap: 8px; }
+  .chrow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 2px solid #E9ECEF; border-radius: 16px; background: #fff; flex-wrap: wrap; }
+  .chrow.on { border-color: var(--main); background: #E7F5FF; }
+  .chrow .ic { font-size: 34px; font-family: var(--emoji); }
+  .chrow .nm { flex: 1; font-weight: 700; min-width: 140px; }
+  .chrow .nm small { display: block; font-weight: 400; color: var(--sub); font-size: 13px; }
+  .tpls { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+  .tpl { text-align: left; padding: 10px 12px; border: 2px solid #E9ECEF; border-radius: 14px; background: #fff; font-size: 15px; font-weight: 700; display: flex; gap: 8px; align-items: center; }
+  .tpl .ic { font-size: 28px; font-family: var(--emoji); }
+  .tpl small { display: block; color: var(--sub); font-weight: 400; font-size: 12px; }
+  .editbox { border: 3px solid var(--main); border-radius: 18px; padding: 14px; margin-top: 12px; background: #FBFDFF; }
+  table.log { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.log th, table.log td { border-bottom: 1px solid #E9ECEF; padding: 6px 4px; text-align: left; }
+  table.log th { color: var(--sub); font-weight: 700; }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: rgba(17,24,39,.9); color: #fff; padding: 14px 22px; border-radius: 14px; font-size: 18px; z-index: 60; display: none; max-width: 90vw; text-align: center; }
+  .toast.show { display: block; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="chip" id="whoChip" type="button" hidden></button>
+  <div class="brand">
+    <div class="mieel-brand" aria-label="MieeL"><span class="orb-mini"></span><strong>MieeL</strong><span class="url">mieel-support-school.com</span></div>
+    <span class="appname">できたよ チャレンジ</span>
+  </div>
+  <button class="gear" id="gear" type="button" aria-label="先生用のせってい（ながおし）">⚙️</button>
+</header>
+<main id="view"></main>
+
+<div class="modal" id="settings" role="dialog" aria-modal="true" aria-label="先生用せってい">
+  <div class="panel" id="settingsPanel"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     できること（行動）の ライブラリ
+     n：カードの ことば、e：えもじ、y：よみ（ちがうときだけ）
+     もちもの（pack）は「もの」の なまえ。チャレンジの「いれる／だす／もつ」で ことばが かわります
+     ============================================================ */
+  const CATS = [
+    { id: 'pack',     name: 'もちもの',            e: '🎒' },
+    { id: 'asa',      name: 'あさの したく',        e: '🌅' },
+    { id: 'mi',       name: 'みだしなみ・きがえ',    e: '👕' },
+    { id: 'seiketsu', name: 'せいけつ・トイレ',      e: '🧼' },
+    { id: 'gakkou',   name: 'がっこう・じゅぎょう',  e: '🏫' },
+    { id: 'kyushoku', name: 'きゅうしょく',          e: '🍱' },
+    { id: 'souji',    name: 'そうじ・かたづけ・おてつだい', e: '🧹' },
+    { id: 'undou',    name: 'からだ・うんどう',      e: '🏃' },
+    { id: 'kotoba',   name: 'ことば・かかわり',      e: '💬' },
+    { id: 'kimochi',  name: 'きもち・きりかえ',      e: '🌈' },
+    { id: 'ouchi',    name: 'おうち・せいかつ',      e: '🏠' },
+    { id: 'soto',     name: 'おでかけ・あんぜん',    e: '🚦' }
+  ];
+  const A = (cat, list) => list.map(x => ({ id: cat + ':' + x[0], cat: cat, n: x[0], e: x[1], y: x[2] || '' }));
+  const ACTS = [].concat(
+    A('pack', [['ハンカチ', '🧣'], ['ティッシュ', '🧻'], ['すいとう', '🥤'], ['れんらくちょう', '📒'], ['タオル', '🧽'], ['きがえ', '👕'], ['うわばき', '👟'],
+      ['くつした', '🧦'], ['おべんとう', '🍱'], ['はし', '🥢'], ['コップ', '🥛'], ['はブラシ', '🪥'], ['マスク', '😷'], ['ぼうし', '🧢'], ['たいそうふく', '🎽'],
+      ['ふでばこ', '✏️'], ['ノート', '📓'], ['きょうかしょ', '📚'], ['プリント', '📄'], ['しゅくだい', '📝'], ['ぞうきん', '🧺'], ['エプロン', '👨‍🍳'], ['さんかくきん', '🔺'],
+      ['ビニールぶくろ', '🛍️'], ['てぶくろ', '🧤'], ['うわぎ', '🧥'], ['かさ', '☂️'], ['みずぎ', '🩱'], ['ゴーグル', '🥽'], ['パジャマ', '🛌'], ['おさいふ', '👛'],
+      ['カード', '🪪'], ['かぎ', '🔑'], ['くすり', '💊'], ['なふだ', '🏷️'], ['しおり', '📖'], ['クレヨン', '🖍️'], ['はさみ', '✂️'], ['のり', '🧴'], ['レジャーシート', '🧺']]),
+    A('asa', [['くつを はきかえる', '👟'], ['くつを くつばこに いれる', '👞'], ['あいさつを する', '🙋'], ['れんらくちょうを だす', '📒'], ['しゅくだいを だす', '📝'],
+      ['すいとうを おく', '🥤'], ['タオルを かける', '🧽'], ['リュックを しまう', '🎒'], ['うわぎを かける', '🧥'], ['なふだを つける', '🏷️'], ['ねつを はかる', '🌡️'],
+      ['じかんわりを みる', '🗓️'], ['いすに すわる', '🪑'], ['あさの かいに でる', '☀️']]),
+    A('mi', [['ふくを きがえる', '👕'], ['ボタンを とめる', '🔘'], ['チャックを しめる', '🧥'], ['くつしたを はく', '🧦'], ['くつを はく', '👟'], ['ふくを たたむ', '👚'],
+      ['ぼうしを かぶる', '🧢'], ['かみを とかす', '💇'], ['はなを かむ', '🤧'], ['シャツを ズボンに いれる', '👖'], ['うわぎを ハンガーに かける', '🧥'], ['パジャマに きがえる', '🛌'],
+      ['かがみを みる', '🪞']]),
+    A('seiketsu', [['てを あらう', '🧼'], ['うがいを する', '🚰'], ['はみがきを する', '🪥'], ['かおを あらう', '🫧'], ['トイレに いく', '🚽'], ['トイレを ながす', '🚽'],
+      ['かみで ふく', '🧻'], ['てを ふく', '🧽'], ['マスクを つける', '😷'], ['おふろに はいる', '🛁'], ['からだを あらう', '🧴'], ['つめを みせる', '💅'], ['「トイレ」と つたえる', '🙋']]),
+    A('gakkou', [['いすに すわって まつ', '🪑'], ['てを あげる', '🙋'], ['「はい」と へんじを する', '🙋'], ['せんせいの はなしを きく', '👂'], ['じゅんばんを まつ', '⏳'],
+      ['ならぶ', '🚶'], ['プリントを する', '📄'], ['なまえを かく', '✏️'], ['どうぐを しまう', '🧰'], ['せんせいを みる', '👀'], ['しずかに まつ', '🤫'], ['ノートを だす', '📓'],
+      ['さいごまで やる', '🏁'], ['はっぴょうする', '🎤'], ['おんどくする', '📖'], ['タブレットを つかう', '📱'], ['つくえを ふく', '🧽']]),
+    A('kyushoku', [['エプロンを きる', '👨‍🍳'], ['「いただきます」を いう', '🙏'], ['よく かむ', '😋'], ['「ごちそうさま」を いう', '🙏'], ['しょっきを はこぶ', '🍽️'],
+      ['しょっきを かたづける', '🍽️'], ['ぎゅうにゅうパックを たたむ', '🥛'], ['はしを つかう', '🥢'], ['すわって たべる', '🪑'], ['こぼさずに たべる', '🍚'], ['くばる', '🍱']]),
+    A('souji', [['ぞうきんがけ', '🧽'], ['ほうきで はく', '🧹'], ['つくえを はこぶ', '🪑'], ['ごみを すてる', '🗑️'], ['ごみを わける', '♻️'], ['おもちゃを かたづける', '🧸'],
+      ['ほんを もどす', '📚'], ['プリントを くばる', '📄'], ['にっちょく', '📢'], ['まどを ふく', '🪟'], ['はなに みずやり', '🪴'], ['いきものの せわ', '🐟'], ['せんたくものを たたむ', '👕'],
+      ['テーブルを ふく', '🧽'], ['くつを そろえる', '👞']]),
+    A('undou', [['あるく', '🚶'], ['はしる', '🏃'], ['かいだんを のぼる', '🪜'], ['ジャンプ', '🦘'], ['ボールを なげる', '⚾'], ['ボールを ける', '⚽'], ['なわとび', '🪢'],
+      ['たいそう', '🤸'], ['ストレッチ', '🧘'], ['けんけん', '🦶'], ['マラソン', '🏃'], ['てつぼう', '🤸'], ['さんぽ', '🌳'], ['かたあしで たつ', '🦩'], ['すべりだい', '🛝'],
+      ['ブランコ', '🎠'], ['プール', '🏊'], ['ダンス', '💃'], ['じてんしゃ', '🚲'], ['トランポリン', '🤾']]),
+    A('kotoba', [['「おはよう」を いう', '🌞'], ['「さようなら」を いう', '👋'], ['「ありがとう」を いう', '🙏'], ['「ごめんね」を いう', '🙇'], ['「かして」を いう', '🤲'],
+      ['「いいよ」を いう', '👌'], ['「てつだって」を いう', '🙋'], ['「おしえて」を いう', '❓'], ['「おわりました」を いう', '✅'], ['ともだちの なまえを よぶ', '🧒'],
+      ['めを みて はなす', '👀'], ['ちいさい こえで はなす', '🤫'], ['カードで つたえる', '🃏'], ['ゆびさしで つたえる', '👉']]),
+    A('kimochi', [['じゅんばんを まてた', '⏳'], ['がまんできた', '💪'], ['しずかに まてた', '🤫'], ['おわりの じかんに やめられた', '⏰'], ['タブレットを おわれた', '📱'],
+      ['あそびを おわれた', '🧸'], ['つぎの かつどうに いけた', '➡️'], ['きもちを つたえられた', '💬'], ['しんこきゅう', '🌬️'], ['おちつく ばしょで やすむ', '🛋️'],
+      ['ともだちに やさしく できた', '💖'], ['まけても だいじょうぶ', '🎲'], ['はじめての ことに チャレンジ', '✨'], ['「たすけて」と いえた', '🆘']]),
+    A('ouchi', [['ひとりで おきる', '⏰'], ['じかんに ねる', '🛌'], ['ごはんを はこぶ', '🍚'], ['おさらを さげる', '🍽️'], ['でんきを けす', '💡'], ['ドアを しめる', '🚪'],
+      ['せんたくものを だす', '🧺'], ['ペットに えさを あげる', '🐶'], ['しゅくだいを する', '📝'], ['おふろそうじ', '🛁'], ['ゴミだし', '🗑️'], ['おてつだい', '🙌'], ['あしたの じゅんび', '🎒']]),
+    A('soto', [['てを つないで あるく', '🤝'], ['しんごうを まもる', '🚦'], ['みちの はしを あるく', '🚶'], ['ならんで あるく', '🚶'], ['のりもので しずかに', '🚌'],
+      ['カードを タッチ', '🪪'], ['かいものを する', '🛒'], ['おかねを はらう', '💴'], ['ヘルメットを かぶる', '⛑️'], ['シートベルトを する', '🚗'], ['まいごに ならない', '🧭'], ['くるまに きを つける', '🚙']])
+  );
+  // もちものの うごき（チャレンジごとに えらぶ）
+  const VERBS = {
+    ireru: { label: 'いれる', tpl: '{n}を いれよう', done: 'いれた！', bag: '🎒', head: 'リュックに いれよう' },
+    dasu:  { label: 'だす',   tpl: '{n}を だそう',   done: 'だした！', bag: '🎒', head: 'リュックから だそう' },
+    motsu: { label: 'もった？', tpl: '{n}を もった？', done: 'もった！', bag: '✅', head: 'もちもの チェック' }
+  };
+  const TYPES = {
+    seq:   { name: 'じゅんばん',  e: '🔢', note: '上から じゅんに 1つずつ（あさの したく など）' },
+    pack:  { name: 'もちもの',    e: '🎒', note: 'すきな じゅんに タップ（リュックに いれる・だす）' },
+    count: { name: 'かいすう',    e: '🔁', note: 'おなじ ことを ◯かい（あるく・なわとび など）' }
+  };
+  const UNITS = ['かい', 'しゅう', 'ほ', 'ふん', 'まい', 'こ', 'ぽん'];
+
+  const REWARDS = [
+    { id: 'douga', name: 'すきな どうが', emoji: '📺' }, { id: 'asobi', name: 'すきな あそび', emoji: '🧸' }, { id: 'hightouch', name: 'ハイタッチ', emoji: '🙌' },
+    { id: 'seal', name: 'シール', emoji: '⭐' }, { id: 'oekaki', name: 'おえかき', emoji: '🖍️' }, { id: 'ehon', name: 'えほん', emoji: '📚' },
+    { id: 'music', name: 'すきな きょく', emoji: '🎵' }, { id: 'block', name: 'ブロック', emoji: '🧱' }, { id: 'puzzle', name: 'パズル', emoji: '🧩' },
+    { id: 'tablet', name: 'タブレット', emoji: '📱' }, { id: 'soto', name: 'そとあそび', emoji: '⚽' }, { id: 'tokkyu', name: 'とくべつな おてつだい', emoji: '🏅' },
+    { id: 'tramp', name: 'トランポリン', emoji: '🤾' }, { id: 'kusuguri', name: 'くすぐり', emoji: '🤗' }
+  ];
+
+  // はじめから つかえる チャレンジの ひな形
+  const TEMPLATES = [
+    { name: 'あさの したく', icon: '🌅', type: 'seq', steps: ['asa:くつを はきかえる', 'asa:あいさつを する', 'asa:れんらくちょうを だす', 'asa:すいとうを おく', 'asa:タオルを かける', 'asa:リュックを しまう', 'seiketsu:トイレに いく', 'seiketsu:てを あらう'] },
+    { name: 'かえりの したく', icon: '🌇', type: 'pack', verb: 'ireru', steps: ['pack:れんらくちょう', 'pack:すいとう', 'pack:タオル', 'pack:ハンカチ', 'pack:きがえ', 'pack:プリント'] },
+    { name: 'あさ リュックから だす', icon: '🎒', type: 'pack', verb: 'dasu', steps: ['pack:れんらくちょう', 'pack:すいとう', 'pack:タオル', 'pack:きがえ', 'pack:しゅくだい'] },
+    { name: 'あしたの もちもの', icon: '✅', type: 'pack', verb: 'motsu', steps: ['pack:ハンカチ', 'pack:ティッシュ', 'pack:すいとう', 'pack:れんらくちょう', 'pack:マスク'] },
+    { name: 'きゅうしょく', icon: '🍱', type: 'seq', steps: ['seiketsu:てを あらう', 'kyushoku:エプロンを きる', 'kyushoku:「いただきます」を いう', 'kyushoku:すわって たべる', 'kyushoku:「ごちそうさま」を いう', 'kyushoku:しょっきを かたづける', 'seiketsu:はみがきを する'] },
+    { name: 'トイレ', icon: '🚽', type: 'seq', steps: ['seiketsu:トイレに いく', 'seiketsu:かみで ふく', 'seiketsu:トイレを ながす', 'seiketsu:てを あらう', 'seiketsu:てを ふく'] },
+    { name: 'きがえ', icon: '👕', type: 'seq', steps: ['mi:ふくを きがえる', 'mi:ボタンを とめる', 'mi:シャツを ズボンに いれる', 'mi:ふくを たたむ', 'mi:くつしたを はく'] },
+    { name: 'そうじ', icon: '🧹', type: 'seq', steps: ['souji:つくえを はこぶ', 'souji:ほうきで はく', 'souji:ぞうきんがけ', 'souji:ごみを すてる', 'souji:つくえを はこぶ'] },
+    { name: 'あるこう', icon: '🚶', type: 'count', steps: [['undou:あるく', 5, 'しゅう']] },
+    { name: 'うんどう', icon: '🏃', type: 'seq', steps: [['undou:ストレッチ', 1], ['undou:ジャンプ', 10], ['undou:なわとび', 10], ['undou:はしる', 2, 'しゅう']] },
+    { name: 'プールの じゅんび', icon: '🏊', type: 'pack', verb: 'ireru', steps: ['pack:みずぎ', 'pack:タオル', 'pack:ぼうし', 'pack:ゴーグル', 'pack:ビニールぶくろ'] },
+    { name: 'しゅくはく の にもつ', icon: '🏕️', type: 'pack', verb: 'ireru', steps: ['pack:パジャマ', 'pack:きがえ', 'pack:はブラシ', 'pack:タオル', 'pack:しおり', 'pack:くすり', 'pack:ビニールぶくろ'] },
+    { name: 'きりかえ', icon: '🌈', type: 'seq', steps: ['kimochi:タブレットを おわれた', 'souji:おもちゃを かたづける', 'kimochi:つぎの かつどうに いけた'] },
+    { name: 'あいさつ', icon: '🙋', type: 'seq', steps: ['kotoba:「おはよう」を いう', 'kotoba:「ありがとう」を いう', 'kotoba:「さようなら」を いう'] },
+    { name: 'じぶんで つくる', icon: '✏️', type: 'seq', steps: [] }
+  ];
+
+  const CHARACTERS = ['🐶', '🐱', '🐰', '🐻', '🐼', '🐧', '🦁', '🦖', '🦄', '🚗', '🚃', '🚀'];
+  const ICONS = ['🐰', '🐻', '🐼', '🐱', '🐶', '🦊', '🐸', '🐧', '🐯', '🐨', '🐵', '🦁', '🐹', '🐮', '🐷', '🐤'];
+  const CH_ICONS = ['🌅', '🌇', '🎒', '✅', '🍱', '🚽', '👕', '🧹', '🚶', '🏃', '🏊', '🏕️', '🌈', '🙋', '⭐', '💪', '📚', '🎵'];
+  const STICKERS = ['🌟', '🦄', '🌈', '🍀', '🐬', '🦋', '🌻', '🍓', '🎈', '🚀', '🐳', '🦕', '🍩', '🎸', '🏆', '🌙', '🐞', '🍉', '🐙', '🦜',
+    '🎠', '🧁', '🌷', '🐝', '🦒', '🍭', '⛄', '🎡', '🐢', '👑', '🦩', '🍒', '🪐', '🦔', '🐠', '🍦', '🎨', '🛸', '🦀', '🌵'];
+  const PRAISES = ['すごい！', 'やったね！', 'かっこいい！', 'いいね！', 'その ちょうし！', 'えらい！', 'じょうず！', 'ばっちり！'];
+
+  /* ============================================================
+     保存
+     ============================================================ */
+  const LS = 'dekitayo.v1';
+  const LS_SES = 'dekitayo.session.v1';
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const pad2 = n => String(n).padStart(2, '0');
+  const today = () => { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); };
+  function load(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function remove(k) { try { localStorage.removeItem(k); } catch (e) { /* 無視 */ } }
+
+  const DEFAULT_SETTINGS = { voice: true, sound: true, volume: 0.8, rate: 0.95, calm: false, character: '🐶' };
+
+  function stepOf(x) { return Array.isArray(x) ? { act: x[0], count: x[1] || 1, unit: x[2] || 'かい' } : { act: x, count: 1, unit: 'かい' }; }
+  function fromTemplate(t) {
+    return {
+      id: 'c' + uid(), name: t.name, icon: t.icon, type: t.type, verb: t.verb || 'ireru',
+      steps: t.steps.map(stepOf), hold: false, timer: 0,
+      reward: { mode: 'choose', fixed: 'douga', choices: ['douga', 'asobi', 'hightouch'] }
+    };
+  }
+  function newProfile(name, icon) {
+    return { id: 'p' + uid(), name: name, icon: icon, challenges: [fromTemplate(TEMPLATES[0]), fromTemplate(TEMPLATES[1])], stickers: [], clears: 0, log: [] };
+  }
+  function normalizeStore(s) {
+    s = s && typeof s === 'object' ? s : {};
+    const out = {
+      profiles: Array.isArray(s.profiles) && s.profiles.length ? s.profiles : [newProfile('みんな', '🐰')],
+      currentId: s.currentId || null,
+      customActs: Array.isArray(s.customActs) ? s.customActs : [],
+      customRewards: Array.isArray(s.customRewards) ? s.customRewards : [],
+      settings: Object.assign({}, DEFAULT_SETTINGS, s.settings || {})
+    };
+    out.profiles.forEach(p => {
+      p.id = p.id || 'p' + uid(); p.name = p.name || 'なまえ'; p.icon = p.icon || '🐰';
+      p.challenges = Array.isArray(p.challenges) ? p.challenges : [];
+      p.challenges.forEach(c => {
+        c.id = c.id || 'c' + uid(); c.steps = Array.isArray(c.steps) ? c.steps : []; c.type = TYPES[c.type] ? c.type : 'seq';
+        c.verb = VERBS[c.verb] ? c.verb : 'ireru'; c.timer = Number(c.timer) || 0;
+        c.reward = Object.assign({ mode: 'choose', fixed: 'douga', choices: [] }, c.reward || {});
+        if (!Array.isArray(c.reward.choices)) c.reward.choices = [];
+      });
+      p.stickers = Array.isArray(p.stickers) ? p.stickers : []; p.clears = p.clears || 0;
+      p.log = Array.isArray(p.log) ? p.log : [];
+    });
+    if (!out.profiles.some(p => p.id === out.currentId)) out.currentId = out.profiles[0].id;
+    return out;
+  }
+  let store = normalizeStore(load(LS));
+  const S = () => store.settings;
+  function persist() { if (!save(LS, store)) toast('保存できませんでした（容量が いっぱいです。写真を へらしてください）'); }
+
+  const curProfile = () => store.profiles.find(p => p.id === store.currentId) || store.profiles[0];
+  const findAct = id => ACTS.find(a => a.id === id) || store.customActs.find(a => a.id === id) || null;
+  const findReward = id => REWARDS.find(r => r.id === id) || store.customRewards.find(r => r.id === id) || null;
+  const validSteps = c => c.steps.filter(s => findAct(s.act) && s.count > 0);
+  const actName = a => a.name || a.n;
+  const sayName = it => (it && (it.yomi || it.y || it.name || it.n)) || '';
+  const picOf = a => ({ name: actName(a), emoji: a.emoji || a.e || '', image: a.image || '' });
+  // カードに だす ことば（もちものは「〜を いれよう」）
+  function stepText(c, act) {
+    if (act.cat === 'pack') return VERBS[c.verb].tpl.replace('{n}', actName(act));
+    return actName(act);
+  }
+  function stepSay(c, act) {
+    if (act.cat === 'pack') return VERBS[c.verb].tpl.replace('{n}', sayName(act));
+    return sayName(act);
+  }
+  const doneLabel = c => c.type === 'pack' ? VERBS[c.verb].done : 'できた！';
+
+  /* ============================================================
+     小さな道具
+     ============================================================ */
+  function h(tag, props) {
+    const el = document.createElement(tag);
+    if (props) Object.keys(props).forEach(k => {
+      const v = props[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    (function add(list) {
+      list.forEach(c => {
+        if (c === null || c === undefined || c === false) return;
+        if (Array.isArray(c)) add(c);
+        else el.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
+      });
+    })(Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+  // null や はいれつ も そのまま わたせる append
+  function add(el) {
+    (function f(list) { list.forEach(c => { if (c === null || c === undefined || c === false) return; if (Array.isArray(c)) f(c); else el.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c); }); })(Array.prototype.slice.call(arguments, 1));
+    return el;
+  }
+  function makePic(it) {
+    const w = h('span', { class: 'pic' });
+    const fallback = () => { w.innerHTML = ''; w.appendChild(it && it.emoji ? h('span', { class: 'emoji' }, it.emoji) : h('span', { class: 'letter' }, Array.from((it && it.name) || '？')[0])); };
+    if (it && it.image) { const img = h('img', { alt: '', draggable: 'false' }); img.onerror = fallback; img.src = it.image; w.appendChild(img); }
+    else fallback();
+    return w;
+  }
+  let toastTimer = null;
+  function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+  let lockUntil = 0;
+  function tapOk(ms) { const n = Date.now(); if (n < lockUntil) return false; lockUntil = n + (ms || 600); return true; }
+  function lock(ms) { lockUntil = Math.max(lockUntil, Date.now() + ms); }
+
+  /* ---------- 音 ---------- */
+  let ac = null;
+  function audio() {
+    if (!S().sound) return null;
+    try { if (!ac) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ac = new AC(); } if (ac.state === 'suspended') ac.resume(); return ac; } catch (e) { return null; }
+  }
+  function tone(freq, start, dur, type, vol) {
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + start, o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime((vol || 0.25) * S().volume, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
+  }
+  const SCALE = [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319];
+  const sfx = {
+    tap() { tone(740, 0, 0.09, 'triangle', 0.18); },
+    step(n) { const f = SCALE[Math.min(Math.max(n - 1, 0), SCALE.length - 1)]; tone(f, 0, 0.16, 'triangle', 0.3); tone(f * 1.5, 0.07, 0.22, 'sine', 0.2); tone(f * 2, 0.15, 0.35, 'sine', 0.14); },
+    pack() { tone(392, 0, 0.08, 'triangle', 0.25); tone(784, 0.06, 0.18, 'sine', 0.2); },
+    clear() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.28, 'triangle', 0.26)); },
+    fanfare() {
+      [[523, 0], [523, 0.12], [523, 0.24], [659, 0.36], [784, 0.6], [659, 0.78], [1047, 0.92]].forEach(n => { tone(n[0], n[1], 0.32, 'square', 0.07); tone(n[0], n[1], 0.38, 'triangle', 0.22); });
+      [1319, 1568, 2093, 2637].forEach((f, i) => tone(f, 1.3 + i * 0.06, 0.6, 'sine', 0.1));
+    },
+    undo() { tone(392, 0, 0.12, 'sine', 0.18); tone(330, 0.1, 0.18, 'sine', 0.16); },
+    chime() { [[784, 0], [659, .45], [523, .9]].forEach(n => tone(n[0], n[1], 1, 'sine', 0.22)); }
+  };
+  const canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  let jaVoice = null;
+  function loadVoice() { if (!canSpeak) return; const v = (speechSynthesis.getVoices() || []).filter(x => /^ja(-|_|$)/i.test(x.lang)); jaVoice = v.find(x => /Kyoko|O-ren|Otoya|Hattori/i.test(x.name)) || v.find(x => x.localService) || v[0] || null; }
+  function speak(text) {
+    if (!canSpeak || !S().voice || !text) return;
+    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(String(text).replace(/[「」]/g, '')); u.lang = 'ja-JP'; u.rate = Number(S().rate) || 1; u.pitch = 1.15; if (jaVoice) u.voice = jaVoice; speechSynthesis.speak(u); } catch (e) { /* 無視 */ }
+  }
+  function stopSpeak() { if (canSpeak) { try { speechSynthesis.cancel(); } catch (e) { /* 無視 */ } } }
+  let wake = null;
+  async function keepAwake() { try { if ('wakeLock' in navigator && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) { /* 無視 */ } }
+  function releaseWake() { try { if (wake) wake.release(); } catch (e) { /* 無視 */ } wake = null; }
+
+  /* ---------- 演出 ---------- */
+  function showPraise(text) { const p = h('div', { class: 'praise' }, text); document.body.appendChild(p); setTimeout(() => p.remove(), 1250); }
+  function flyStars(from) {
+    if (S().calm || !from) return;
+    const r = from.getBoundingClientRect();
+    for (let i = 0; i < 7; i++) {
+      const s = h('span', { class: 'fly' }, pick(['⭐', '✨', '🌟']));
+      s.style.left = (r.left + r.width / 2 - 20) + 'px'; s.style.top = (r.top + r.height / 2 - 20) + 'px';
+      const ang = Math.random() * Math.PI * 2, dist = 140 + Math.random() * 140;
+      s.style.setProperty('--dx', Math.cos(ang) * dist + 'px'); s.style.setProperty('--dy', Math.sin(ang) * dist - 60 + 'px'); s.style.setProperty('--r', (Math.random() * 360 - 180) + 'deg');
+      document.body.appendChild(s); setTimeout(() => s.remove(), 1000);
+    }
+  }
+  function confetti() {
+    if (S().calm) return;
+    for (let i = 0; i < 46; i++) {
+      const c = h('span', { class: 'confetti' }, pick(['🎉', '⭐', '🎊', '✨', '🌟', '💖', '🍀']));
+      c.style.left = Math.random() * 100 + 'vw'; c.style.fontSize = (24 + Math.random() * 30) + 'px';
+      c.style.animationDuration = (2.2 + Math.random() * 1.8) + 's'; c.style.animationDelay = (Math.random() * 0.8) + 's';
+      c.style.setProperty('--r', (Math.random() * 900 - 450) + 'deg');
+      document.body.appendChild(c); setTimeout(() => c.remove(), 5000);
+    }
+  }
+
+  /* ============================================================
+     画面
+     ============================================================ */
+  let screen = 'start';
+  let chosenReward = null;
+  let curCid = null;
+  let session = load(LS_SES);
+  function saveSession() { if (session) save(LS_SES, session); else remove(LS_SES); }
+  function setView(cls, children) { const v = $('#view'); v.innerHTML = ''; v.appendChild(h('section', { class: 'screen ' + cls }, children)); }
+  function updateChip() {
+    const chip = $('#whoChip'), p = curProfile(), show = store.profiles.length > 1 && screen !== 'who';
+    chip.hidden = !show; chip.innerHTML = '';
+    if (show) chip.append(h('span', { class: 'ic' }, p.icon), p.name);
+  }
+  const usable = p => p.challenges.filter(c => validSteps(c).length);
+  const doneToday = (p, c) => p.log.some(l => l.cid === c.id && l.d === today());
+
+  /* ---- だれ？ ---- */
+  function renderWho() {
+    screen = 'who'; updateChip();
+    setView('who', [
+      h('h1', { class: 'title' }, 'だれが チャレンジする？'),
+      h('div', { class: 'grid-cards' }, store.profiles.map(p => h('button', {
+        type: 'button', class: 'pcard',
+        onclick: () => { if (!tapOk(500)) return; sfx.tap(); speak(sayName(p)); store.currentId = p.id; persist(); chosenReward = null; home(); }
+      }, h('span', { class: 'ic' }, p.icon), p.name, h('small', null, '⭐ ' + uniqueStickers(p) + ' / ' + STICKERS.length))))
+    ]);
+    lock(500);
+  }
+  function home() { const cs = usable(curProfile()); if (cs.length === 1) { curCid = cs[0].id; renderStart(); } else renderChoose(); }
+
+  /* ---- どれを する？ ---- */
+  function renderChoose() {
+    screen = 'choose'; updateChip();
+    const p = curProfile(), cs = usable(p);
+    if (!cs.length) {
+      setView('choose', [h('div', { class: 'empty-msg' }, h('div', null, 'チャレンジが まだ ありません', h('small', null, '先生：右上の ⚙️ を 1.5秒 ながおしして つくってください')))]);
+      return;
+    }
+    setView('choose', [
+      h('h1', { class: 'title' }, 'どれを する？'),
+      h('div', { class: 'grid-cards' }, cs.map(c => h('button', {
+        type: 'button', class: 'pcard' + (doneToday(p, c) ? ' done' : ''),
+        onclick: () => { if (!tapOk(500)) return; sfx.tap(); speak(c.name); curCid = c.id; chosenReward = null; renderStart(); }
+      }, h('span', { class: 'ic' }, c.icon), c.name, h('small', null, TYPES[c.type].e + ' ' + validSteps(c).length + 'こ' + (doneToday(p, c) ? '　⭐ きょう できた' : ''))))),
+      h('div', { class: 'actions' }, h('button', { type: 'button', class: 'round-btn', 'aria-label': 'シールちょう', onclick: () => { if (tapOk(500)) { sfx.tap(); renderBook(); } } }, '📒'))
+    ]);
+    lock(400);
+  }
+  const curChallenge = () => { const p = curProfile(); return p.challenges.find(c => c.id === curCid) || usable(p)[0]; };
+
+  /* ---- きょうの チャレンジ（見とおし） ---- */
+  function renderStart() {
+    screen = 'start'; updateChip();
+    const p = curProfile(), c = curChallenge();
+    if (!c || !validSteps(c).length) return renderChoose();
+    curCid = c.id;
+    const steps = validSteps(c);
+    const cards = steps.map((s, i) => {
+      const a = findAct(s.act);
+      return h('div', { class: 'scard' }, c.type === 'seq' ? h('span', { class: 'no' }, i + 1) : null, makePic(picOf(a)),
+        h('div', { class: 'nm' }, a.cat === 'pack' ? actName(a) : actName(a)),
+        s.count > 1 || c.type === 'count' ? h('div', { class: 'cnt' }, s.count + s.unit) : null);
+    });
+    const rw = c.reward;
+    let rewardBlock = null, needChoose = false;
+    if (rw.mode === 'fixed' && findReward(rw.fixed)) {
+      const r = findReward(rw.fixed); chosenReward = r.id;
+      rewardBlock = h('div', { class: 'reward-box' }, h('div', { class: 'rlabel' }, 'できたら ごほうび'), h('div', { class: 'rgrid' }, h('div', { class: 'rcard fixed' }, makePic(r), r.name)));
+    } else if (rw.mode === 'choose') {
+      const list = rw.choices.map(findReward).filter(Boolean);
+      if (list.length === 1) chosenReward = list[0].id;
+      if (list.length) {
+        needChoose = true;
+        if (!list.some(r => r.id === chosenReward)) chosenReward = null;
+        rewardBlock = h('div', { class: 'reward-box', id: 'rewardBox' },
+          h('div', { class: 'rlabel' }, list.length > 1 ? 'できたら ごほうび ― えらんでね' : 'できたら ごほうび'),
+          h('div', { class: 'rgrid' }, list.map(r => h('button', {
+            type: 'button', class: 'rcard' + (chosenReward === r.id ? ' sel' : ''),
+            onclick: e => { if (!tapOk(300)) return; chosenReward = r.id; sfx.tap(); speak(sayName(r)); $$('.rcard').forEach(x => x.classList.remove('sel')); e.currentTarget.classList.add('sel'); $('#startBtn').classList.remove('dim'); }
+          }, makePic(r), r.name))));
+      }
+    } else chosenReward = null;
+    const startBtn = h('button', {
+      type: 'button', id: 'startBtn', class: 'big-btn go' + (needChoose && !chosenReward ? ' dim' : ''),
+      onclick: () => {
+        if (!tapOk(800)) return;
+        if (needChoose && !chosenReward) { sfx.tap(); speak('ごほうびを えらんでね'); const b = $('#rewardBox'); if (b) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); } return; }
+        startSession(chosenReward);
+      }
+    }, h('span', null, '▶'), 'はじめる！');
+    setView('start', [
+      h('h1', { class: 'title' }, h('span', { style: 'font-family:var(--emoji);font-weight:400' }, c.icon), ' ', c.name),
+      h('div', { class: 'sched' }, cards),
+      rewardBlock ? h('div', { class: 'then' }, '⬇') : null,
+      rewardBlock,
+      h('div', { class: 'actions' },
+        usable(p).length > 1 ? h('button', { type: 'button', class: 'round-btn', 'aria-label': 'もどる', onclick: () => { if (tapOk(500)) { sfx.tap(); renderChoose(); } } }, '◀') : null,
+        h('button', { type: 'button', class: 'round-btn', 'aria-label': 'よみあげ', onclick: () => { if (tapOk(500)) readPlan(); } }, '🔊'),
+        startBtn,
+        h('button', { type: 'button', class: 'round-btn', 'aria-label': 'シールちょう', onclick: () => { if (tapOk(500)) { sfx.tap(); renderBook(); } } }, '📒'))
+    ]);
+    lock(400);
+  }
+  function readPlan() {
+    const c = curChallenge(), steps = validSteps(c);
+    let t = c.name + '。' + steps.map((s, i) => (c.type === 'seq' ? (i + 1) + 'ばん、' : '') + stepSay(c, findAct(s.act)) + (s.count > 1 ? '、' + s.count + s.unit : '') + '。').join('');
+    const r = c.reward.mode === 'fixed' ? findReward(c.reward.fixed) : findReward(chosenReward);
+    if (r) t += 'できたら、ごほうびは ' + sayName(r) + '。'; else if (c.reward.mode === 'choose') t += 'ごほうびを えらんでね。';
+    speak(t);
+  }
+
+  function startSession(rewardId) {
+    const p = curProfile(), c = curChallenge();
+    const acts = [], marks = [];
+    validSteps(c).forEach(s => {
+      const a = findAct(s.act);
+      const ai = acts.push({ name: actName(a), emoji: a.emoji || a.e || '', image: a.image || '', yomi: a.yomi || a.y || '', cat: a.cat, unit: s.unit, count: s.count }) - 1;
+      if (c.type === 'pack') marks.push({ ai: ai });
+      else for (let i = 0; i < s.count; i++) marks.push({ ai: ai });
+    });
+    const r = findReward(rewardId);
+    session = {
+      pid: p.id, cid: c.id, cname: c.name, cicon: c.icon, type: c.type, verb: c.verb, hold: !!c.hold, timer: c.timer || 0,
+      date: today(), acts: acts, marks: marks, done: 0, got: {}, t: Date.now(),
+      reward: r ? { name: r.name, emoji: r.emoji || '', image: r.image || '', yomi: r.yomi || '' } : null
+    };
+    saveSession(); sfx.clear(); keepAwake();
+    if (c.type === 'pack') { speak(VERBS[c.verb].head + '！'); renderPack(); }
+    else { const a = acts[marks[0].ai]; speak(sayAct(a) + '！ がんばれ！'); renderPlay(); }
+  }
+  const sesC = () => ({ type: session.type, verb: session.verb });
+  function sayAct(a) { return stepSay(sesC(), Object.assign({ n: a.name }, a)); }
+  function textAct(a) { return stepText(sesC(), Object.assign({ n: a.name }, a)); }
+
+  /* ---- じかんの めやす ---- */
+  let tmrInt = null;
+  function timerEl() {
+    if (!session || !session.timer) return h('span');
+    const el = h('div', { class: 'tmr', id: 'tmr' });
+    const draw = () => {
+      const tot = session.timer * 60, left = Math.max(0, tot - (Date.now() - session.t) / 1000), f = left / tot, a = f * 360, e = (a - 90) * Math.PI / 180;
+      const path = a >= 359.9 ? '<circle cx="25" cy="25" r="20" fill="#FA5252"/>' : a > 0 ? '<path d="M25 25 L25 5 A20 20 0 ' + (a > 180 ? 1 : 0) + ' 1 ' + (25 + 20 * Math.cos(e)) + ' ' + (25 + 20 * Math.sin(e)) + ' Z" fill="#FA5252"/>' : '';
+      el.innerHTML = '<svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="23" fill="#fff" stroke="#DEE2E6" stroke-width="3"/>' + path + '</svg>' + (left > 0 ? 'あと ' + Math.ceil(left / 60) + 'ふん' : 'じかんだよ');
+      el.classList.toggle('over', left <= 0);
+      if (left <= 0 && !session.chimed) { session.chimed = true; saveSession(); sfx.chime(); speak('じかんだよ。さいごまで やってみよう'); }
+    };
+    draw(); clearInterval(tmrInt); tmrInt = setInterval(() => { if (!document.body.contains(el)) { clearInterval(tmrInt); return; } draw(); }, 1000);
+    return el;
+  }
+  function undoBtn(fn) {
+    const b = h('button', { type: 'button', class: 'undo' }, '↩ ひとつ もどす（ながおし）');
+    let t = null;
+    const cancel = () => { clearTimeout(t); b.classList.remove('pressing'); };
+    b.addEventListener('pointerdown', () => { b.classList.add('pressing'); t = setTimeout(() => { cancel(); fn(); }, 900); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, cancel));
+    b.addEventListener('contextmenu', e => e.preventDefault());
+    return b;
+  }
+  function bindDone(btn, fn) {
+    if (session.hold) {
+      let t = null;
+      const cancel = () => { clearTimeout(t); t = null; btn.classList.remove('holding'); };
+      btn.addEventListener('pointerdown', () => { if (Date.now() < lockUntil) return; btn.classList.add('holding'); t = setTimeout(() => { cancel(); fn(); }, 700); });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, cancel));
+      btn.addEventListener('contextmenu', e => e.preventDefault());
+    } else btn.addEventListener('click', fn);
+  }
+
+  /* ---- じゅんばん・かいすう ---- */
+  function remainInSegment() {
+    const m = session.marks[session.done]; if (!m) return 0;
+    let n = 0; for (let i = session.done; i < session.marks.length; i++) { if (session.marks[i].ai !== m.ai) break; n++; }
+    return n;
+  }
+  function renderPlay() {
+    if (!session) return renderStart();
+    screen = 'play'; updateChip();
+    const total = session.marks.length, useTrack = total <= 20;
+    let trackEl;
+    if (useTrack) {
+      const stops = [h('div', { class: 'stop start done' }, h('div', { class: 'dot' }, h('span', null, '🚩')))];
+      session.marks.forEach((m, i) => stops.push(h('div', { class: 'stop' + (i === total - 1 ? ' goal' : ''), 'data-i': i + 1 }, h('div', { class: 'dot' }, h('span')))));
+      trackEl = h('div', { class: 'track', id: 'track' }, stops, h('span', { class: 'runner', id: 'runner' }, S().character));
+    } else trackEl = h('div', { class: 'pbar', id: 'pbar' }, h('i'), h('b'));
+    const btn = h('button', { type: 'button', class: 'done-btn', id: 'doneBtn' }, h('span', { class: 'bemoji' }, '👍'), h('span', { class: 'blabel' }, 'できた！'), session.hold ? h('span', { class: 'holdhint' }, 'ながく おしてね') : null);
+    bindDone(btn, doStep);
+    setView('play', [
+      h('div', { class: 'mission-bar' }, h('div', { class: 'mtext', id: 'mtext' }), h('div', { class: 'remain', id: 'remain' })),
+      trackEl,
+      h('div', { class: 'play-main' }, h('div', { class: 'act-card', id: 'actCard' }), btn),
+      h('div', { class: 'play-foot' }, undoBtn(undoStep), timerEl(),
+        session.reward ? h('div', { class: 'reward-mini' }, makePic(session.reward), 'ごほうび：' + session.reward.name) : h('span'))
+    ]);
+    updatePlay(false); lock(500);
+  }
+  function updatePlay(animate) {
+    if (!session || screen !== 'play') return;
+    const total = session.marks.length, done = session.done, fin = done >= total;
+    const m = session.marks[Math.min(done, total - 1)], a = session.acts[m.ai];
+    $('#mtext').textContent = fin ? 'ぜんぶ できた！' : textAct(a);
+    const rem = fin ? 0 : remainInSegment();
+    const remEl = $('#remain');
+    const multi = a.count > 1;
+    remEl.textContent = fin ? '🎉' : multi ? (rem === 1 ? 'さいごの 1' + a.unit + '！' : 'あと ' + rem + a.unit) : (total - done === 1 ? 'さいごの 1こ！' : 'のこり ' + (total - done) + 'こ');
+    remEl.classList.toggle('last', !fin && ((multi && rem === 1) || (!multi && total - done === 1)));
+    const card = $('#actCard'); card.innerHTML = '';
+    card.append(makePic(a), h('div', { class: 'aname' }, a.name));
+    if (multi) card.append(h('div', { class: 'aname', style: 'font-size:22px;color:var(--sub)' }, (fin ? a.count : a.count - rem + 1) + ' / ' + a.count + a.unit));
+    const tr = $('#track');
+    if (tr) {
+      $$('#track .stop[data-i]').forEach(st => {
+        const i = Number(st.getAttribute('data-i')), isDone = i <= done, was = st.classList.contains('done'), last = i === total;
+        st.classList.toggle('done', isDone); st.classList.toggle('now', i === done + 1);
+        const am = session.acts[session.marks[i - 1].ai];
+        const sp = st.querySelector('.dot > span');
+        sp.textContent = last ? '🎁' : (isDone ? '⭐' : (am.emoji || '・'));
+        st.classList.toggle('justdone', !!animate && isDone && !was);
+      });
+      placeRunner(animate);
+    } else {
+      const pb = $('#pbar'); pb.querySelector('i').style.width = (done / total * 100) + '%'; pb.querySelector('b').textContent = done + ' / ' + total;
+    }
+  }
+  function placeRunner(animate) {
+    const runner = $('#runner'), stopsEl = $$('#track .stop'), target = stopsEl[Math.min(session ? session.done : 0, stopsEl.length - 1)];
+    if (!runner || !target) return;
+    requestAnimationFrame(() => { runner.style.left = (target.offsetLeft + target.offsetWidth / 2) + 'px'; if (animate) { runner.classList.remove('hop'); void runner.offsetWidth; runner.classList.add('hop'); } });
+  }
+  function doStep() {
+    if (!session || session.done >= session.marks.length) return;
+    if (!tapOk(1000)) return;
+    const prev = session.marks[session.done];
+    session.done++; saveSession();
+    const total = session.marks.length, btn = $('#doneBtn');
+    sfx.step(session.done); flyStars(btn);
+    if (btn) { btn.classList.add('locked'); setTimeout(() => btn.classList.remove('locked'), 1000); }
+    const pr = pick(PRAISES);
+    if (session.done >= total) { showPraise('クリア！'); speak(pr + ' ぜんぶ できたね！'); updatePlay(true); lock(2000); setTimeout(renderGoal, S().calm ? 700 : 1400); return; }
+    const next = session.marks[session.done];
+    showPraise(pr); updatePlay(true);
+    if (next.ai !== prev.ai) {
+      const pa = session.acts[prev.ai], na = session.acts[next.ai];
+      speak(pr + ' つぎは、' + sayAct(na));
+      setTimeout(() => { sfx.clear(); showInterstitial(pa, na); }, 500);
+      return;
+    }
+    const r = remainInSegment(), a = session.acts[next.ai];
+    speak(pr + (r === 1 ? ' さいごの 1' + a.unit + '！' : ' あと ' + r + a.unit + '！'));
+  }
+  function showInterstitial(pa, na) {
+    lock(1500);
+    const ov = h('div', { class: 'overlay' }, h('div', { class: 'ov-card' },
+      h('div', { class: 'big' }, '✅ ' + pa.name + ' できた！'), h('div', { class: 'next' }, 'つぎは'), makePic(na), h('div', { class: 'next' }, textAct(na))));
+    const close = () => { if (ov.parentNode) ov.remove(); };
+    ov.addEventListener('click', () => { if (Date.now() >= lockUntil) close(); });
+    document.body.appendChild(ov); setTimeout(close, 2800);
+  }
+  function undoStep() { if (!session || session.done <= 0) return; session.done--; saveSession(); sfx.undo(); updatePlay(false); toast('ひとつ もどしました'); }
+
+  /* ---- もちもの（すきな じゅんに タップ） ---- */
+  function renderPack() {
+    if (!session) return renderStart();
+    screen = 'pack'; updateChip();
+    const v = VERBS[session.verb];
+    const items = h('div', { class: 'items', id: 'items' }, session.acts.map((a, i) => {
+      const card = h('button', { type: 'button', class: 'icard' + (session.got[i] ? ' ok' : ''), 'data-i': i }, makePic(a), h('span', { class: 'nm' }, a.name));
+      if (session.hold) bindHoldCard(card, i); else card.addEventListener('click', () => doPack(i, card));
+      return card;
+    }));
+    setView('pack', [
+      h('div', { class: 'mission-bar' }, h('div', { class: 'mtext' }, v.head), h('div', { class: 'remain', id: 'remain' })),
+      h('div', { class: 'pack-main' }, items, h('div', { class: 'bagbox' }, h('div', { class: 'bag', id: 'bag' }, v.bag), h('div', { class: 'bagcnt', id: 'bagcnt' }))),
+      h('div', { class: 'play-foot' }, undoBtn(undoPack), timerEl(),
+        session.reward ? h('div', { class: 'reward-mini' }, makePic(session.reward), 'ごほうび：' + session.reward.name) : h('span'))
+    ]);
+    updatePack(); lock(500);
+  }
+  function bindHoldCard(card, i) {
+    let t = null;
+    const cancel = () => { clearTimeout(t); t = null; card.style.outline = ''; };
+    card.addEventListener('pointerdown', () => { if (session.got[i]) return; card.style.outline = '6px solid #FFD43B'; t = setTimeout(() => { cancel(); doPack(i, card); }, 600); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => card.addEventListener(ev, cancel));
+  }
+  function updatePack() {
+    const n = session.acts.length, got = Object.keys(session.got).length, rem = n - got;
+    $('#remain').textContent = rem ? (rem === 1 ? 'さいごの 1こ！' : 'あと ' + rem + 'こ') : '🎉';
+    $('#remain').classList.toggle('last', rem === 1);
+    $('#bagcnt').textContent = got + ' / ' + n;
+  }
+  function doPack(i, card) {
+    if (!session || session.got[i] || Date.now() < lockUntil) return;
+    lock(350);
+    session.got[i] = 1; session.done = Object.keys(session.got).length; saveSession();
+    const a = session.acts[i], bag = $('#bag');
+    card.classList.add('ok');
+    sfx.pack(); setTimeout(() => sfx.step(session.done), 120);
+    // カードから リュックへ（だす ときは リュックから カードへ）とんでいく
+    if (!S().calm && bag) {
+      const r1 = card.getBoundingClientRect(), r2 = bag.getBoundingClientRect(), out = session.verb === 'dasu';
+      const from = out ? r2 : r1, to = out ? r1 : r2;
+      const f = h('span', { class: 'flyitem' }, a.emoji || '📦');
+      f.style.fontSize = '64px'; f.style.left = (from.left + from.width / 2 - 32) + 'px'; f.style.top = (from.top + from.height / 2 - 32) + 'px';
+      document.body.appendChild(f);
+      requestAnimationFrame(() => { f.style.transform = 'translate(' + (to.left + to.width / 2 - from.left - from.width / 2) + 'px,' + (to.top + to.height / 2 - from.top - from.height / 2) + 'px) scale(.5)'; f.style.opacity = '0.2'; });
+      setTimeout(() => { f.remove(); bag.classList.remove('bump'); void bag.offsetWidth; bag.classList.add('bump'); }, 560);
+    }
+    const pr = pick(PRAISES), n = session.acts.length;
+    updatePack();
+    if (session.done >= n) { showPraise('クリア！'); speak(pr + ' ぜんぶ ' + VERBS[session.verb].done.replace('！', '') + 'ね！'); lock(2000); setTimeout(renderGoal, S().calm ? 700 : 1400); return; }
+    showPraise(pr);
+    speak(sayName(a) + '、' + VERBS[session.verb].done.replace('！', '') + '！ ' + (n - session.done === 1 ? 'さいごの 1こ！' : 'あと ' + (n - session.done) + 'こ'));
+  }
+  function undoPack() {
+    const ks = Object.keys(session.got); if (!ks.length) return;
+    delete session.got[ks[ks.length - 1]]; session.done = Object.keys(session.got).length; saveSession(); sfx.undo(); renderPack(); toast('ひとつ もどしました');
+  }
+
+  /* ---- クリア！ ---- */
+  function uniqueStickers(p) { return new Set(p.stickers.map(s => s.s)).size; }
+  function renderGoal() {
+    if (!session) return renderStart();
+    clearInterval(tmrInt);
+    const p = store.profiles.find(x => x.id === session.pid) || curProfile();
+    const have = new Set(p.stickers.map(s => s.s));
+    const pool = STICKERS.map((_, i) => i).filter(i => !have.has(i));
+    const si = pool.length ? pick(pool) : Math.floor(Math.random() * STICKERS.length), isNew = pool.length > 0;
+    const sec = Math.round((Date.now() - session.t) / 1000);
+    p.stickers.push({ s: si, d: today() }); p.clears++;
+    p.log.push({ d: today(), at: new Date(session.t).toTimeString().slice(0, 5), cid: session.cid, name: session.cname, n: session.type === 'pack' ? session.acts.length : session.marks.length, sec: sec });
+    if (p.log.length > 500) p.log = p.log.slice(-500);
+    persist();
+    const reward = session.reward;
+    session = null; saveSession(); releaseWake();
+    screen = 'goal'; updateChip();
+    setView('goal', [
+      h('h1', null, 'やったー！'), h('div', { class: 'sub' }, 'ぜんぶ できたね！'),
+      h('div', { class: 'goal-row' },
+        reward ? h('div', { class: 'gbox' }, h('div', { class: 'lbl' }, 'ごほうび'), makePic(reward), h('div', { class: 'nm' }, reward.name)) : null,
+        h('div', { class: 'gbox st' }, h('div', { class: 'lbl' }, isNew ? 'あたらしい シール！' : 'シール ゲット！'), h('div', { class: 'sticker-big' }, STICKERS[si]),
+          h('div', { class: 'lbl' }, 'あつめた シール ' + uniqueStickers(p) + ' / ' + STICKERS.length))),
+      h('div', { class: 'time' }, '⏱ ' + (sec >= 60 ? Math.floor(sec / 60) + 'ふん ' : '') + (sec % 60) + 'びょう'),
+      h('div', { class: 'actions' },
+        h('button', { type: 'button', class: 'big-btn blue', onclick: () => { if (tapOk(600)) { sfx.tap(); renderBook(si); } } }, '📒 シールちょう'),
+        h('button', { type: 'button', class: 'big-btn go', onclick: () => { if (tapOk(600)) { sfx.tap(); finish(); } } }, '🏠 おわる'))
+    ]);
+    sfx.fanfare(); confetti();
+    speak('やったね！ ぜんぶ できたね！' + (reward ? ' ごほうびは ' + sayName(reward) + '！' : '') + ' シールも ゲット！');
+    lock(1500);
+  }
+  function finish() { chosenReward = null; if (store.profiles.length > 1) renderWho(); else home(); }
+
+  /* ---- シールちょう ---- */
+  function renderBook(highlight) {
+    screen = 'book'; updateChip();
+    const p = curProfile(), counts = {};
+    p.stickers.forEach(s => { counts[s.s] = (counts[s.s] || 0) + 1; });
+    setView('book', [
+      h('div', { class: 'book-head' },
+        h('button', { type: 'button', class: 'back-btn', onclick: () => { if (tapOk(500)) { sfx.tap(); finish(); } } }, '◀ もどる'),
+        h('h1', null, '📒 ' + (store.profiles.length > 1 ? p.name + 'の ' : '') + 'シールちょう'),
+        h('div', { class: 'count' }, '⭐ ' + uniqueStickers(p) + ' / ' + STICKERS.length)),
+      h('div', { class: 'sgrid' }, STICKERS.map((st, i) => counts[i] ? h('div', { class: 'slot' + (i === highlight ? ' new' : '') }, st, counts[i] > 1 ? h('span', { class: 'n' }, '×' + counts[i]) : null) : h('div', { class: 'slot no' }, '？'))),
+      h('div', { class: 'note', style: 'text-align:center;font-size:18px' }, 'できたよ チャレンジ ' + p.clears + 'かい')
+    ]);
+    if (uniqueStickers(p) >= STICKERS.length && highlight !== undefined) speak('シールが ぜんぶ そろったよ！ すごい！');
+    lock(400);
+  }
+
+  /* ============================================================
+     先生用：設定
+     ============================================================ */
+  let editPid = null, editCid = null, pickerOpen = false, pickCat = 'pack', pickQ = '', tplOpen = false;
+  let draftAct = { name: '', emoji: '', image: '', cat: 'pack' };
+  let draftReward = { name: '', emoji: '', image: '' };
+  const editProfile = () => store.profiles.find(p => p.id === editPid) || curProfile();
+  function openSettings() { stopSpeak(); editPid = store.currentId; editCid = null; renderSettings(); $('#settings').classList.add('open'); $('#settings').scrollTop = 0; }
+  function closeSettings() {
+    $('#settings').classList.remove('open'); lock(500); applyCalm();
+    if (screen === 'play' && session) renderPlay();
+    else if (screen === 'pack' && session) renderPack();
+    else if (screen === 'who') renderWho();
+    else if (screen === 'book') renderBook();
+    else if (screen === 'goal') { /* そのまま */ }
+    else home();
+  }
+  function refresh() { const m = $('#settings'), st = m.scrollTop; renderSettings(); m.scrollTop = st; }
+  function change(fn) { fn(); persist(); refresh(); }
+  function fileToDataUrl(file, max) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        const sc = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc));
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('写真を 読みこめませんでした')); };
+      img.src = url;
+    });
+  }
+  function photoInput(draft, prev) {
+    const setPrev = d => { prev.style.backgroundImage = d ? 'url("' + d + '")' : ''; prev.textContent = d ? '' : 'しゃしん'; };
+    setPrev(draft.image);
+    return [h('label', { class: 'btn' }, '📷 しゃしんを えらぶ・とる', h('input', {
+      type: 'file', accept: 'image/*', hidden: true,
+      onchange: e => { const f = e.target.files && e.target.files[0]; if (!f) return; fileToDataUrl(f, 480).then(d => { draft.image = d; setPrev(d); }).catch(err => toast(err.message)); }
+    })), h('button', { type: 'button', class: 'btn', onclick: () => { draft.image = ''; setPrev(''); } }, 'はずす')];
+  }
+
+  function renderSettings() {
+    const P = editProfile();
+    const panel = $('#settingsPanel');
+    panel.innerHTML = '';
+    const sec = (title, note) => [h('h3', null, title), note ? h('p', { class: 'note' }, note) : null];
+
+    /* だれ？ */
+    const profileSec = [
+      sec('だれの せってい？', '子どもごとに チャレンジ・ごほうび・シール・きろくを わけられます。2人以上で はじめに「だれ？」が でます。なまえは ニックネームで OK（この端末の中だけに保存）。'),
+      h('div', { class: 'btns' },
+        h('select', { onchange: e => { editPid = e.target.value; editCid = null; refresh(); } }, store.profiles.map(p => h('option', { value: p.id, selected: p.id === P.id }, p.icon + ' ' + p.name))),
+        h('button', { type: 'button', class: 'btn', onclick: () => change(() => { const np = newProfile('あたらしい こ', ICONS[store.profiles.length % ICONS.length]); store.profiles.push(np); editPid = np.id; editCid = null; }) }, '＋ こどもを ふやす'),
+        store.profiles.length > 1 ? h('button', { type: 'button', class: 'btn warn', onclick: () => { if (!confirm('「' + P.name + '」を けしますか？（シール・きろくも きえます）')) return; change(() => { store.profiles = store.profiles.filter(x => x !== P); if (store.currentId === P.id) store.currentId = store.profiles[0].id; editPid = store.profiles[0].id; editCid = null; }); } }, 'この こを けす') : null),
+      h('label', { class: 'f', style: 'margin-top:10px' }, h('span', null, 'なまえ'), h('input', { type: 'text', maxlength: '12', value: P.name, onchange: e => change(() => { P.name = e.target.value.trim() || 'なまえ'; }) })),
+      h('div', { class: 'f', style: 'margin-top:8px' }, h('span', null, 'マーク'), h('div', { class: 'emoji-row' }, ICONS.map(ic => h('button', { type: 'button', class: 'ebtn' + (ic === P.icon ? ' on' : ''), onclick: () => change(() => { P.icon = ic; }) }, ic))))
+    ];
+
+    /* チャレンジ いちらん */
+    const chList = P.challenges.map((c, i) => h('div', { class: 'chrow' + (c.id === editCid ? ' on' : '') },
+      h('span', { class: 'ic' }, c.icon),
+      h('div', { class: 'nm' }, c.name, h('small', null, TYPES[c.type].e + ' ' + TYPES[c.type].name + '・' + validSteps(c).length + 'こ' + (c.timer ? '・⏱' + c.timer + 'ふん' : ''))),
+      h('button', { type: 'button', class: 'btn primary', onclick: () => { editCid = c.id === editCid ? null : c.id; pickerOpen = false; refresh(); } }, c.id === editCid ? '▲ とじる' : '✏️ へんしゅう'),
+      h('button', { type: 'button', class: 'mini', 'aria-label': 'うえへ', onclick: () => change(() => { if (i > 0) { P.challenges[i] = P.challenges[i - 1]; P.challenges[i - 1] = c; } }) }, '↑'),
+      h('button', { type: 'button', class: 'mini', 'aria-label': 'コピー', onclick: () => change(() => { const cp = JSON.parse(JSON.stringify(c)); cp.id = 'c' + uid(); cp.name += '（コピー）'; P.challenges.splice(i + 1, 0, cp); }) }, '⧉'),
+      h('button', { type: 'button', class: 'mini warn', 'aria-label': 'けす', onclick: () => { if (confirm('「' + c.name + '」を けしますか？')) change(() => { P.challenges.splice(i, 1); if (editCid === c.id) editCid = null; }); } }, '✕')));
+    const tplBox = tplOpen ? h('div', { class: 'picker' }, h('div', { class: 'note' }, 'ひな形を えらぶと、あとから 自由に かえられます'),
+      h('div', { class: 'tpls' }, TEMPLATES.map(t => h('button', { type: 'button', class: 'tpl', onclick: () => change(() => { const c = fromTemplate(t); P.challenges.push(c); editCid = c.id; tplOpen = false; }) },
+        h('span', { class: 'ic' }, t.icon), h('span', null, t.name, h('small', null, TYPES[t.type].name + (t.steps.length ? '・' + t.steps.length + 'こ' : ''))))))) : null;
+    const chSec = [
+      sec('チャレンジ（' + P.name + '）', '子どもは この中から えらびます（1つだけなら すぐ はじまります）。「じゅんばん」は手順表、「もちもの」は リュックに いれる・だす チェック、「かいすう」は おなじ ことの くりかえし に むいています。'),
+      h('div', { class: 'chlist' }, chList.length ? chList : h('div', { class: 'note' }, 'まだ ありません')),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn ok', onclick: () => { tplOpen = !tplOpen; refresh(); } }, tplOpen ? '▲ とじる' : '＋ チャレンジを つくる')),
+      tplBox,
+      editCid ? editChallenge(P, P.challenges.find(c => c.id === editCid)) : null
+    ];
+
+    /* キャラ・音 */
+    const chk = (key, label) => h('label', { class: 'row' }, h('span', null, label), h('input', { type: 'checkbox', checked: !!S()[key], onchange: e => { S()[key] = e.target.checked; persist(); applyCalm(); } }));
+    const rng = (key, label, min, max, step) => {
+      const out = h('b'), fmt = () => { out.textContent = ' ' + Math.round(Number(S()[key]) * 100) + '%'; }; fmt();
+      return h('label', { class: 'row' }, h('span', null, label, out), h('input', { type: 'range', min: min, max: max, step: step, value: S()[key], oninput: e => { S()[key] = Number(e.target.value); fmt(); persist(); } }));
+    };
+    const otherSec = [
+      sec('すすむ キャラクター', null),
+      h('div', { class: 'emoji-row' }, CHARACTERS.map(c => h('button', { type: 'button', class: 'ebtn' + (c === S().character ? ' on' : ''), onclick: () => change(() => { S().character = c; }) }, c))),
+      sec('おと・ひょうじ', null),
+      chk('voice', '🗣️ こえで ほめる・よみあげる'), chk('sound', '🔔 こうかおん'),
+      rng('volume', 'こうかおんの 大きさ', 0.1, 1, 0.05), rng('rate', 'こえの はやさ', 0.6, 1.3, 0.05),
+      chk('calm', '🌙 えんしゅつを ひかえめに（音や うごきが にがてな子に）'),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn', onclick: () => { sfx.step(3); speak('すごい！ のこり 2こ'); } }, '🔊 ためす')),
+      h('p', { class: 'note' }, '※ iPad の 消音モードだと 効果音が 鳴りません。')
+    ];
+
+    /* きろく */
+    const logs = P.log.slice().reverse();
+    const fmtSec = s => (s >= 60 ? Math.floor(s / 60) + '分' : '') + (s % 60) + '秒';
+    const week = {}; const since = Date.now() - 7 * 864e5;
+    P.log.forEach(l => { if (new Date(l.d).getTime() >= since - 864e5) week[l.name] = (week[l.name] || 0) + 1; });
+    const logSec = [
+      sec('きろく（' + P.name + '）', 'クリアした 日・時刻・かかった時間を 記録します。個別の指導計画の評価に つかえます。'),
+      h('div', { class: 'status' }, Object.keys(week).length ? 'この1週間：' + Object.keys(week).map(k => k + ' ' + week[k] + '回').join('、') : 'この1週間の きろくは まだ ありません'),
+      logs.length ? h('table', { class: 'log' }, h('tr', null, h('th', null, '日にち'), h('th', null, '時刻'), h('th', null, 'チャレンジ'), h('th', null, 'こ'), h('th', null, 'かかった時間')),
+        logs.slice(0, 30).map(l => h('tr', null, h('td', null, l.d), h('td', null, l.at || ''), h('td', null, l.name), h('td', null, l.n), h('td', null, fmtSec(l.sec || 0))))) : null,
+      h('div', { class: 'btns' },
+        h('button', { type: 'button', class: 'btn', onclick: () => exportCsv(P) }, '⬇ きろくを CSV で かきだす（Excel 用）'),
+        h('button', { type: 'button', class: 'btn warn', onclick: () => { if (confirm(P.name + 'の きろくを けしますか？')) change(() => { P.log = []; }); } }, 'きろくを けす'))
+    ];
+
+    /* シール・バックアップ */
+    const stickerSec = [
+      sec('シールちょう（' + P.name + '）', null),
+      h('div', { class: 'status' }, 'あつめた シール：' + uniqueStickers(P) + ' / ' + STICKERS.length + ' しゅるい ／ クリア：' + P.clears + 'かい'),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn warn', onclick: () => { if (confirm(P.name + 'の シールを ぜんぶ けしますか？')) change(() => { P.stickers = []; P.clears = 0; }); } }, 'シールを ぜんぶ けす'))
+    ];
+    const backupSec = [
+      sec('バックアップ', 'すべての せってい・写真・シール・きろくを ファイルに保存して、べつの iPad に うつせます。'),
+      h('div', { class: 'btns' },
+        h('button', { type: 'button', class: 'btn', onclick: exportAll }, '⬇ ファイルに かきだす'),
+        h('label', { class: 'btn' }, '⬆ ファイルを よみこむ', h('input', { type: 'file', accept: '.json,application/json', hidden: true, onchange: e => { const f = e.target.files && e.target.files[0]; if (f) importAll(f); e.target.value = ''; } })))
+    ];
+    const abortSec = session ? [
+      sec('いま すすめている チャレンジ', null),
+      h('div', { class: 'status' }, session.cname + '：' + session.done + ' / ' + (session.type === 'pack' ? session.acts.length : session.marks.length)),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn warn', onclick: () => { if (!confirm('とちゅうの チャレンジを やめますか？')) return; session = null; saveSession(); releaseWake(); clearInterval(tmrInt); screen = 'start'; toast('チャレンジを やめました'); refresh(); } }, 'とちゅうで やめる'))
+    ] : [];
+
+    panel.append(
+      h('div', { class: 'panel-head' }, h('h2', null, '⚙️ 先生用せってい'), h('button', { type: 'button', class: 'btn ok', onclick: closeSettings }, 'とじる')),
+      h('p', { class: 'note' }, 'この画面は 右上の ⚙️ を 1.5秒 ながおし すると ひらきます。変更は すぐに保存されます（この端末のみ）。'),
+      h('div', null, abortSec, profileSec, chSec, otherSec, logSec, stickerSec, backupSec),
+      h('div', { class: 'btns', style: 'margin-top:26px' }, h('button', { type: 'button', class: 'btn ok', onclick: closeSettings }, 'とじる')),
+      h('div', { class: 'mieel-foot' }, h('div', { class: 'mieel-brand' }, h('span', { class: 'orb-mini' }), h('strong', null, 'MieeL'), h('a', { href: 'https://www.mieel-support-school.com/', target: '_blank', rel: 'noopener' }, 'www.mieel-support-school.com')), '© できたよ チャレンジ（特別支援教育向け）'));
+  }
+
+  /* ---- チャレンジの へんしゅう ---- */
+  function editChallenge(P, c) {
+    if (!c) return null;
+    const box = h('div', { class: 'editbox' });
+    // なまえ・マーク・しゅるい
+    add(box, 
+      h('label', { class: 'f' }, h('span', null, 'チャレンジの なまえ'), h('input', { type: 'text', maxlength: '20', value: c.name, onchange: e => change(() => { c.name = e.target.value.trim() || 'チャレンジ'; }) })),
+      h('div', { class: 'f', style: 'margin-top:8px' }, h('span', null, 'マーク'), h('div', { class: 'emoji-row' }, CH_ICONS.map(ic => h('button', { type: 'button', class: 'ebtn' + (ic === c.icon ? ' on' : ''), onclick: () => change(() => { c.icon = ic; }) }, ic)))),
+      h('h4', null, 'すすめかた'),
+      h('div', { class: 'seg' }, Object.keys(TYPES).map(k => h('button', { type: 'button', class: c.type === k ? 'on' : '', onclick: () => change(() => { c.type = k; }) }, TYPES[k].e + ' ' + TYPES[k].name, h('small', null, TYPES[k].note)))),
+      c.type === 'pack' ? [h('h4', null, 'もちものを どうする？'), h('div', { class: 'seg' }, Object.keys(VERBS).map(k => h('button', { type: 'button', class: c.verb === k ? 'on' : '', onclick: () => change(() => { c.verb = k; }) }, VERBS[k].label + '（' + VERBS[k].head + '）')))] : null
+    );
+    // こうもく
+    const rows = c.steps.map((s, i) => {
+      const a = findAct(s.act);
+      if (!a) return null;
+      return h('div', { class: 'erow' }, makePic(picOf(a)), h('div', { class: 'ename' }, c.type === 'pack' ? stepText(c, a) : actName(a)),
+        c.type !== 'pack' ? h('div', { class: 'stepper' },
+          h('button', { type: 'button', onclick: () => change(() => { s.count = Math.max(1, s.count - 1); }) }, '−'),
+          h('b', null, s.count + s.unit),
+          h('button', { type: 'button', onclick: () => change(() => { s.count = Math.min(50, s.count + 1); }) }, '＋')) : null,
+        c.type !== 'pack' ? h('select', { onchange: e => change(() => { s.unit = e.target.value; }) }, UNITS.map(u => h('option', { value: u, selected: u === s.unit }, u))) : null,
+        h('button', { type: 'button', class: 'mini', 'aria-label': 'うえへ', onclick: () => change(() => { if (i > 0) { c.steps[i] = c.steps[i - 1]; c.steps[i - 1] = s; } }) }, '↑'),
+        h('button', { type: 'button', class: 'mini warn', 'aria-label': 'けす', onclick: () => change(() => { c.steps.splice(i, 1); }) }, '✕'));
+    }).filter(Boolean);
+    add(box, h('h4', null, (c.type === 'pack' ? 'もちもの' : 'やること') + '（' + rows.length + 'こ）'), h('div', { class: 'elist' }, rows.length ? rows : h('div', { class: 'note' }, 'まだ ありません。下の「＋ ついか」から えらんでください')),
+      h('div', { class: 'btns' }, h('button', { type: 'button', class: 'btn primary', onclick: () => { pickerOpen = !pickerOpen; if (c.type === 'pack') pickCat = 'pack'; refresh(); } }, pickerOpen ? '▲ とじる' : '＋ ついか')));
+    if (pickerOpen) add(box, actPicker(c));
+    // じかん・ながおし
+    add(box, h('h4', null, 'じかんの めやす'), h('div', { class: 'seg' }, [0, 3, 5, 10, 15, 20].map(m => h('button', { type: 'button', class: c.timer === m ? 'on' : '', onclick: () => change(() => { c.timer = m; }) }, m ? m + 'ふん' : 'なし'))),
+      h('p', { class: 'note' }, 'あかい えんばんで のこり時間が 見えます。時間が すぎても しっぱいには なりません（「じかんだよ」と おしらせ）。'),
+      h('label', { class: 'row' }, h('span', null, '✋ ながおしで「できた」（うっかり タッチを ふせぐ／先生が おす とき）'), h('input', { type: 'checkbox', checked: !!c.hold, onchange: e => change(() => { c.hold = e.target.checked; }) })));
+    // ごほうび
+    const mode = c.reward.mode, allRewards = REWARDS.concat(store.customRewards);
+    add(box, h('h4', null, 'ごほうび'),
+      h('div', { class: 'seg' }, [['choose', '👆 こどもが えらぶ'], ['fixed', '🎯 先生が きめる'], ['none', '⭐ シールだけ']].map(x => h('button', { type: 'button', class: mode === x[0] ? 'on' : '', onclick: () => change(() => { c.reward.mode = x[0]; }) }, x[1]))),
+      mode === 'none' ? null : h('div', { class: 'tiles', style: 'margin-top:10px' }, allRewards.map(r => {
+        const on = mode === 'fixed' ? c.reward.fixed === r.id : c.reward.choices.indexOf(r.id) !== -1;
+        return h('button', {
+          type: 'button', class: 'tile' + (on ? ' on' : ''),
+          onclick: () => {
+            if (mode === 'fixed') { change(() => { c.reward.fixed = r.id; }); return; }
+            const ch = c.reward.choices, i = ch.indexOf(r.id);
+            if (i === -1 && ch.length >= 4) { toast('えらべるのは 4つまで です'); return; }
+            change(() => { if (i !== -1) ch.splice(i, 1); else ch.push(r.id); });
+          }
+        }, makePic(r), r.name, on && mode === 'choose' ? h('span', { class: 'badge' }, '✔') : null,
+          r.id.indexOf('cr_') === 0 ? h('span', { class: 'x', onclick: e => { e.stopPropagation(); if (!confirm('「' + r.name + '」を けしますか？')) return; change(() => { store.customRewards = store.customRewards.filter(x => x !== r); store.profiles.forEach(p => p.challenges.forEach(cc => { cc.reward.choices = cc.reward.choices.filter(id => id !== r.id); })); }); } }, '✕') : null);
+      })),
+      mode === 'none' ? null : (() => {
+        const prev = h('div', { class: 'photo-prev' });
+        return h('div', { class: 'cform', style: 'margin-top:8px' }, h('div', { class: 'cform-t' }, '✏️ ごほうびを つくる'),
+          h('label', { class: 'f' }, h('span', null, 'なまえ'), h('input', { type: 'text', maxlength: '16', placeholder: '例：ボールあそび', value: draftReward.name, oninput: e => { draftReward.name = e.target.value; } })),
+          h('label', { class: 'f' }, h('span', null, 'えもじ（なくても OK）'), h('input', { type: 'text', maxlength: '8', value: draftReward.emoji, oninput: e => { draftReward.emoji = e.target.value; } })),
+          h('div', { class: 'photo-row' }, prev, photoInput(draftReward, prev)),
+          h('div', null, h('button', { type: 'button', class: 'btn ok', onclick: () => {
+            const name = draftReward.name.trim(); if (!name) { toast('なまえを いれてください'); return; }
+            const r = { id: 'cr_' + uid(), name: name, emoji: draftReward.emoji.trim(), image: draftReward.image };
+            change(() => { store.customRewards.push(r); if (c.reward.mode === 'fixed') c.reward.fixed = r.id; else if (c.reward.choices.length < 4) c.reward.choices.push(r.id); draftReward = { name: '', emoji: '', image: '' }; });
+            toast('「' + name + '」を つくりました');
+          } }, '＋ つくる')));
+      })());
+    return box;
+  }
+
+  /* ---- できる ことを えらぶ ---- */
+  function actPicker(c) {
+    const all = ACTS.concat(store.customActs);
+    const q = pickQ.trim();
+    const list = q ? all.filter(a => actName(a).indexOf(q) !== -1) : all.filter(a => a.cat === pickCat);
+    const has = id => c.steps.some(s => s.act === id);
+    const search = h('input', { type: 'search', placeholder: '🔍 さがす（例：てを、リュック）', value: pickQ });
+    search.addEventListener('input', e => { pickQ = e.target.value; clearTimeout(search._t); search._t = setTimeout(() => { refresh(); const s = $('#settings input[type=search]'); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); } }, 350); });
+    const prev = h('div', { class: 'photo-prev' });
+    return h('div', { class: 'picker' },
+      search,
+      q ? null : h('div', { class: 'cats' }, CATS.concat([{ id: 'custom', name: 'じぶんで つくった', e: '✏️' }]).map(ct => h('button', { type: 'button', class: pickCat === ct.id ? 'on' : '', onclick: () => { pickCat = ct.id; refresh(); } }, ct.e + ' ' + ct.name))),
+      h('div', { class: 'note' }, c.type === 'pack' && pickCat !== 'pack' && !q ? '※「もちもの」いがいも いれられます（そのときは ことばが そのまま でます）' : 'タップすると ついか されます（もう いちど おすと もう1つ）'),
+      h('div', { class: 'tiles' }, (pickCat === 'custom' && !q ? store.customActs : list).map(a => h('button', {
+        type: 'button', class: 'tile' + (has(a.id) ? ' on' : ''),
+        onclick: () => change(() => { c.steps.push({ act: a.id, count: c.type === 'count' ? 5 : 1, unit: a.cat === 'undou' && c.type === 'count' ? 'かい' : 'かい' }); })
+      }, makePic(picOf(a)), actName(a), has(a.id) ? h('span', { class: 'badge' }, '✔') : null,
+        a.id.indexOf('ca_') === 0 ? h('span', { class: 'x', onclick: e => { e.stopPropagation(); if (!confirm('「' + actName(a) + '」を けしますか？')) return; change(() => { store.customActs = store.customActs.filter(x => x !== a); store.profiles.forEach(p => p.challenges.forEach(cc => { cc.steps = cc.steps.filter(s => s.act !== a.id); })); }); } }, '✕') : null))),
+      h('div', { class: 'cform' },
+        h('div', { class: 'cform-t' }, '✏️ じぶんで つくる（実物の 写真を つけると わかりやすい）'),
+        h('label', { class: 'f' }, h('span', null, 'ことば（例：「ハンカチ」「くつを そろえる」「ブランコを 10かい」）'), h('input', { type: 'text', maxlength: '24', value: draftAct.name, oninput: e => { draftAct.name = e.target.value; } })),
+        h('label', { class: 'f' }, h('span', null, 'しゅるい'), h('select', { onchange: e => { draftAct.cat = e.target.value; } }, [['pack', '🎒 もちもの（もの の なまえ）'], ['custom', '✅ やること']].map(o => h('option', { value: o[0], selected: draftAct.cat === o[0] }, o[1])))),
+        h('label', { class: 'f' }, h('span', null, 'えもじ（写真が ないとき用・なくても OK）'), h('input', { type: 'text', maxlength: '8', value: draftAct.emoji, oninput: e => { draftAct.emoji = e.target.value; } })),
+        h('label', { class: 'f' }, h('span', null, 'よみかた（よみあげが まちがう ときだけ）'), h('input', { type: 'text', maxlength: '30', value: draftAct.yomi || '', oninput: e => { draftAct.yomi = e.target.value; } })),
+        h('div', { class: 'photo-row' }, prev, photoInput(draftAct, prev)),
+        h('div', null, h('button', { type: 'button', class: 'btn ok', onclick: () => {
+          const name = draftAct.name.trim(); if (!name) { toast('ことばを いれてください'); return; }
+          const a = { id: 'ca_' + uid(), cat: draftAct.cat === 'pack' ? 'pack' : 'custom', name: name, emoji: draftAct.emoji.trim(), image: draftAct.image, yomi: (draftAct.yomi || '').trim() };
+          change(() => { store.customActs.push(a); c.steps.push({ act: a.id, count: c.type === 'count' ? 5 : 1, unit: 'かい' }); draftAct = { name: '', emoji: '', image: '', cat: draftAct.cat }; });
+          toast('「' + name + '」を つくりました');
+        } }, '＋ つくって ついか'))));
+  }
+
+  /* ---- かきだし・よみこみ ---- */
+  function download(name, text, type) {
+    const blob = new Blob([text], { type: type }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function exportCsv(P) {
+    const rows = [['なまえ', '日にち', '時刻', 'チャレンジ', 'こ', 'かかった秒']].concat(P.log.map(l => [P.name, l.d, l.at || '', l.name, l.n, l.sec || 0]));
+    download('dekitayo-' + P.name + '-' + today() + '.csv', '﻿' + rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n'), 'text/csv');
+  }
+  function exportAll() { download('dekitayo-' + today() + '.json', JSON.stringify({ app: 'dekitayo-challenge', version: 1, store: store }), 'application/json'); }
+  function importAll(file) {
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const obj = JSON.parse(String(r.result)); if (!obj || !obj.store) throw new Error();
+        if (!confirm('いまの せっていを、ファイルの 中身で おきかえますか？')) return;
+        store = normalizeStore(obj.store); editPid = store.currentId; editCid = null; persist(); refresh(); toast('よみこみました');
+      } catch (e) { toast('この ファイルは よみこめませんでした'); }
+    };
+    r.readAsText(file);
+  }
+
+  function applyCalm() { document.body.classList.toggle('calm', !!S().calm); }
+  function bindGear() {
+    const gear = $('#gear'); let t = null;
+    const cancel = () => { clearTimeout(t); gear.classList.remove('pressing'); };
+    gear.addEventListener('pointerdown', e => { e.preventDefault(); gear.classList.add('pressing'); t = setTimeout(() => { cancel(); openSettings(); }, 1500); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => gear.addEventListener(ev, cancel));
+    gear.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.shiftKey && (e.key === 'S' || e.key === 's') && !$('#settings').classList.contains('open')) openSettings();
+      if (e.key === 'Escape' && $('#settings').classList.contains('open')) closeSettings();
+    });
+    $('#settings').addEventListener('click', e => { if (e.target.id === 'settings') closeSettings(); });
+  }
+  function makeTouchIcon() {
+    try {
+      const c = document.createElement('canvas'); c.width = c.height = 180; const g = c.getContext('2d');
+      g.fillStyle = '#4DABF7'; g.fillRect(0, 0, 180, 180);
+      g.font = '118px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('👍', 90, 98);
+      $('#touchIcon').href = c.toDataURL('image/png');
+    } catch (e) { /* 無視 */ }
+  }
+
+  /* ============================================================
+     はじまり
+     ============================================================ */
+  function start() {
+    applyCalm(); bindGear(); makeTouchIcon();
+    if (canSpeak) { loadVoice(); if ('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = loadVoice; }
+    document.addEventListener('gesturestart', e => e.preventDefault());
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && (screen === 'play' || screen === 'pack')) keepAwake(); });
+    window.addEventListener('resize', () => { if (screen === 'play') placeRunner(false); });
+    $('#whoChip').addEventListener('click', () => { if ((screen === 'start' || screen === 'choose') && store.profiles.length > 1 && tapOk(500)) { sfx.tap(); renderWho(); } });
+    // 同じ日の とちゅうの チャレンジは つづきから
+    if (session && session.date === today() && Date.now() - session.t < 3 * 3600 * 1000 && store.profiles.some(p => p.id === session.pid) &&
+        (session.type === 'pack' ? Object.keys(session.got || {}).length < session.acts.length : session.done < session.marks.length)) {
+      store.currentId = session.pid; curCid = session.cid; session.got = session.got || {};
+      if (session.type === 'pack') renderPack(); else renderPlay();
+    } else {
+      session = null; saveSession();
+      if (store.profiles.length > 1) renderWho(); else home();
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+</body>
+</html>
