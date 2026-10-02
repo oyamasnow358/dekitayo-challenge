@@ -306,6 +306,7 @@
   .chrow .ic { font-size: 34px; font-family: var(--emoji); }
   .chrow .nm { flex: 1; font-weight: 700; min-width: 140px; }
   .chrow .nm small { display: block; font-weight: 400; color: var(--sub); font-size: 13px; }
+  .tplg { font-weight: 800; color: var(--main-d); margin: 12px 0 6px; font-size: 15px; }
   .tpls { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
   .tpl { text-align: left; padding: 10px 12px; border: 2px solid #E9ECEF; border-radius: 14px; background: #fff; font-size: 15px; font-weight: 700; display: flex; gap: 8px; align-items: center; }
   .tpl .ic { font-size: 28px; font-family: var(--emoji); }
@@ -350,9 +351,17 @@
     { id: 'mi',       name: 'みだしなみ・きがえ',    e: '👕' },
     { id: 'seiketsu', name: 'せいけつ・トイレ',      e: '🧼' },
     { id: 'gakkou',   name: 'がっこう・じゅぎょう',  e: '🏫' },
+    { id: 'benkyou',  name: 'べんきょう',            e: '📚' },
+    { id: 'ongaku',   name: 'おんがく',              e: '🎵' },
+    { id: 'zukou',    name: 'ずこう・びじゅつ',      e: '🎨' },
+    { id: 'undou',    name: 'たいいく・うんどう',    e: '🏃' },
+    { id: 'sagyou',   name: 'さぎょう がくしゅう',   e: '🛠️' },
+    { id: 'chouri',   name: 'ちょうり・クッキング',  e: '🍳' },
+    { id: 'jiritsu',  name: 'じりつ かつどう',       e: '🧩' },
     { id: 'kyushoku', name: 'きゅうしょく',          e: '🍱' },
     { id: 'souji',    name: 'そうじ・かたづけ・おてつだい', e: '🧹' },
-    { id: 'undou',    name: 'からだ・うんどう',      e: '🏃' },
+    { id: 'asobi',    name: 'あそび・よか',          e: '🎲' },
+    { id: 'gyouji',   name: 'ぎょうじ・こうがい がくしゅう', e: '🎌' },
     { id: 'kotoba',   name: 'ことば・かかわり',      e: '💬' },
     { id: 'kimochi',  name: 'きもち・きりかえ',      e: '🌈' },
     { id: 'ouchi',    name: 'おうち・せいかつ',      e: '🏠' },
@@ -383,7 +392,37 @@
       ['テーブルを ふく', '🧽'], ['くつを そろえる', '👞']]),
     A('undou', [['あるく', '🚶'], ['はしる', '🏃'], ['かいだんを のぼる', '🪜'], ['ジャンプ', '🦘'], ['ボールを なげる', '⚾'], ['ボールを ける', '⚽'], ['なわとび', '🪢'],
       ['たいそう', '🤸'], ['ストレッチ', '🧘'], ['けんけん', '🦶'], ['マラソン', '🏃'], ['てつぼう', '🤸'], ['さんぽ', '🌳'], ['かたあしで たつ', '🦩'], ['すべりだい', '🛝'],
-      ['ブランコ', '🎠'], ['プール', '🏊'], ['ダンス', '💃'], ['じてんしゃ', '🚲'], ['トランポリン', '🤾']]),
+      ['ブランコ', '🎠'], ['プール', '🏊'], ['ダンス', '💃'], ['じてんしゃ', '🚲'], ['トランポリン', '🤾'],
+      ['じゅんび たいそう', '🙆'], ['ラジオたいそう', '📻'], ['ボッチャ', '🔴'], ['ボールを うける', '🙌'], ['マット うんどう', '🤸'], ['とびばこ', '📦'], ['フラフープ', '⭕'],
+      ['バランスボール', '⚽'], ['サーキット', '🔁'], ['リレー', '🏃'], ['へいきんだい', '🪵'], ['ゆうぐで あそぶ', '🛝'], ['せいれつ・たいけい', '🧍']]),
+    A('benkyou', [['なまえを よむ', '👀'], ['ひらがなを なぞる', '✏️'], ['ひらがなを かく', '✍️'], ['カタカナを かく', '✍️'], ['えカードを えらぶ', '🃏'], ['かずを かぞえる', '🔢'],
+      ['すうじを かく', '🔢'], ['いろを わける', '🎨'], ['かたちを あわせる', '🔷'], ['おなじ ものを さがす', '🔍'], ['とけいを よむ', '🕒'], ['おかねを かぞえる', '💴'],
+      ['えほんを よむ', '📚'], ['ドリルを 1まい', '📄'], ['タブレットで がくしゅう', '📱'], ['ことばを まねする', '🗣️'], ['こたえを ゆびさす', '👉'], ['にっきを かく', '📔'],
+      ['まるつけを してもらう', '⭕'], ['しゅくだいの プリント', '📝']]),
+    A('ongaku', [['うたを うたう', '🎤'], ['てびょうし', '👏'], ['たいこを たたく', '🥁'], ['すずを ならす', '🔔'], ['カスタネット', '🪇'], ['タンバリン', '🪘'],
+      ['けんばんハーモニカ', '🎹'], ['リコーダー', '🪈'], ['もっきん', '🎼'], ['ハンドベル', '🔔'], ['リズムに あわせて うごく', '💃'], ['てあそびうた', '🙌'], ['おとを きく', '👂'],
+      ['あいずで はじめる', '🙋'], ['あいずで とめる', '✋'], ['がっきを くばる', '🎶'], ['がっきを かたづける', '🧰'], ['まえで はっぴょう', '🎤']]),
+    A('zukou', [['えを かく', '🖍️'], ['いろを ぬる', '🎨'], ['えのぐを つかう', '🎨'], ['ふでを あらう', '🖌️'], ['はさみで きる', '✂️'], ['のりで はる', '🧴'],
+      ['セロテープで とめる', '📎'], ['おりがみを おる', '🦢'], ['ちぎりえ', '📄'], ['ねんど', '🟫'], ['スタンプを おす', '🔴'], ['シールを はる', '⭐'], ['しんぶんしを しく', '📰'],
+      ['なまえを かく', '✏️'], ['さくひんを みせる', '🖼️'], ['どうぐを かたづける', '🧰'], ['つくえを ふく', '🧽']]),
+    A('sagyou', [['さぎょうふくに きがえる', '🥼'], ['ぼうし・エプロンを つける', '👨‍🍳'], ['てじゅんしょを みる', '📋'], ['ふくろに つめる', '🛍️'], ['かずを かぞえて いれる', '🔢'],
+      ['シールを はる', '🏷️'], ['ハンコを おす', '🔴'], ['はこを くみたてる', '📦'], ['ねじを しめる', '🔩'], ['ビーズを とおす', '📿'], ['タオルを たたむ', '🧺'], ['かみを おる', '📄'],
+      ['さをりおり', '🧶'], ['かみすき', '📜'], ['けんぴん（たしかめる）', '🔍'], ['できた かずを かぞえる', '📊'], ['「できました」と ほうこく', '🙋'], ['「おねがいします」と いう', '🙇'],
+      ['せいひんを はこぶ', '📦'], ['モップがけ', '🧹'], ['まどふき', '🪟'], ['はたけに みずやり', '🚿'], ['くさとり', '🌱'], ['しゅうかく', '🥕'],
+      ['「いらっしゃいませ」と いう', '🛒'], ['おかねを うけとる', '💴'], ['どうぐを もとに もどす', '🧰'], ['さいごまで つづける', '🏁']]),
+    A('chouri', [['てを あらう', '🧼'], ['エプロンと さんかくきん', '👨‍🍳'], ['ざいりょうを あつめる', '🥕'], ['やさいを あらう', '🥬'], ['かわを むく', '🥔'], ['ほうちょうで きる', '🔪'],
+      ['はかる', '⚖️'], ['まぜる', '🥣'], ['こねる', '🍞'], ['やく', '🍳'], ['でんしレンジ', '📟'], ['おさらに もる', '🍽️'], ['くばる', '🍱'], ['「いただきます」を いう', '🙏'],
+      ['あらいもの', '🧽'], ['しょっきを ふく', '🍽️'], ['しょっきを しまう', '🗄️'], ['テーブルを ふく', '🧽'], ['おちゃを いれる', '🍵']]),
+    A('jiritsu', [['スケジュールを みる', '🗓️'], ['ボタンの れんしゅう', '🔘'], ['ひもを むすぶ', '🎀'], ['ペグさし', '📌'], ['かたはめ', '🔷'], ['ビーズとおし', '📿'],
+      ['つまむ れんしゅう', '🤏'], ['せんを なぞる', '〰️'], ['パズル', '🧩'], ['めで おう', '👀'], ['スイッチを おす', '🔘'], ['バランスボール', '⚽'], ['マッサージを うける', '💆'],
+      ['しんこきゅう', '🌬️'], ['からだを ほぐす', '🧘'], ['たつ れんしゅう', '🧍'], ['きもちカードを えらぶ', '🃏'], ['「やすみたい」を つたえる', '🙋'], ['ひとりで さぎょう', '🧑‍💻'],
+      ['タイマーまで つづける', '⏲️']]),
+    A('asobi', [['ブロック', '🧱'], ['パズル', '🧩'], ['ボードゲーム', '🎲'], ['トランプ', '🃏'], ['ボウリング', '🎳'], ['ふうせんバレー', '🎈'], ['しゃぼんだま', '🫧'],
+      ['えほん', '📖'], ['おえかき', '🖍️'], ['すなあそび', '🏖️'], ['みずあそび', '💦'], ['ままごと', '🍳'], ['ともだちと あそぶ', '🧒'], ['「いれて」と いう', '🙋'],
+      ['かわりばんこ', '🔄'], ['あそびを かたづける', '🧸']]),
+    A('gyouji', [['ぜんこう ちょうかい', '🏫'], ['うんどうかい', '🏃'], ['はっぴょうかい', '🎭'], ['えんそく', '🚌'], ['しゅうがく りょこう', '🗾'], ['かいもの がくしゅう', '🛒'],
+      ['ひなん くんれん', '🚨'], ['「おはしも」を まもる', '🚨'], ['たんじょうかい', '🎂'], ['こうりゅう がくしゅう', '🤝'], ['バスに のる', '🚌'], ['でんしゃに のる', '🚃'],
+      ['そとの トイレを つかう', '🚻'], ['おみせで ちゅうもん', '🍔'], ['みんなで しゃしん', '📷'], ['しきの あいだ すわる', '🪑'], ['こえを だして おうえん', '📣']]),
     A('kotoba', [['「おはよう」を いう', '🌞'], ['「さようなら」を いう', '👋'], ['「ありがとう」を いう', '🙏'], ['「ごめんね」を いう', '🙇'], ['「かして」を いう', '🤲'],
       ['「いいよ」を いう', '👌'], ['「てつだって」を いう', '🙋'], ['「おしえて」を いう', '❓'], ['「おわりました」を いう', '✅'], ['ともだちの なまえを よぶ', '🧒'],
       ['めを みて はなす', '👀'], ['ちいさい こえで はなす', '🤫'], ['カードで つたえる', '🃏'], ['ゆびさしで つたえる', '👉']]),
@@ -417,27 +456,48 @@
   ];
 
   // はじめから つかえる チャレンジの ひな形
+  const TPL_GROUPS = [
+    { id: 'shitaku', name: 'したく・せいかつ', e: '🎒' },
+    { id: 'katsudo', name: 'がっこうの かつどう', e: '🏫' },
+    { id: 'kokoro',  name: 'からだ・きもち・ことば', e: '🌈' }
+  ];
   const TEMPLATES = [
-    { name: 'あさの したく', icon: '🌅', type: 'seq', steps: ['asa:くつを はきかえる', 'asa:あいさつを する', 'asa:れんらくちょうを だす', 'asa:すいとうを おく', 'asa:タオルを かける', 'asa:リュックを しまう', 'seiketsu:トイレに いく', 'seiketsu:てを あらう'] },
-    { name: 'かえりの したく', icon: '🌇', type: 'pack', verb: 'ireru', steps: ['pack:れんらくちょう', 'pack:すいとう', 'pack:タオル', 'pack:ハンカチ', 'pack:きがえ', 'pack:プリント'] },
-    { name: 'あさ リュックから だす', icon: '🎒', type: 'pack', verb: 'dasu', steps: ['pack:れんらくちょう', 'pack:すいとう', 'pack:タオル', 'pack:きがえ', 'pack:しゅくだい'] },
-    { name: 'あしたの もちもの', icon: '✅', type: 'pack', verb: 'motsu', steps: ['pack:ハンカチ', 'pack:ティッシュ', 'pack:すいとう', 'pack:れんらくちょう', 'pack:マスク'] },
-    { name: 'きゅうしょく', icon: '🍱', type: 'seq', steps: ['seiketsu:てを あらう', 'kyushoku:エプロンを きる', 'kyushoku:「いただきます」を いう', 'kyushoku:すわって たべる', 'kyushoku:「ごちそうさま」を いう', 'kyushoku:しょっきを かたづける', 'seiketsu:はみがきを する'] },
-    { name: 'トイレ', icon: '🚽', type: 'seq', steps: ['seiketsu:トイレに いく', 'seiketsu:かみで ふく', 'seiketsu:トイレを ながす', 'seiketsu:てを あらう', 'seiketsu:てを ふく'] },
-    { name: 'きがえ', icon: '👕', type: 'seq', steps: ['mi:ふくを きがえる', 'mi:ボタンを とめる', 'mi:シャツを ズボンに いれる', 'mi:ふくを たたむ', 'mi:くつしたを はく'] },
-    { name: 'そうじ', icon: '🧹', type: 'seq', steps: ['souji:つくえを はこぶ', 'souji:ほうきで はく', 'souji:ぞうきんがけ', 'souji:ごみを すてる', 'souji:つくえを はこぶ'] },
-    { name: 'あるこう', icon: '🚶', type: 'count', steps: [['undou:あるく', 5, 'しゅう']] },
-    { name: 'うんどう', icon: '🏃', type: 'seq', steps: [['undou:ストレッチ', 1], ['undou:ジャンプ', 10], ['undou:なわとび', 10], ['undou:はしる', 2, 'しゅう']] },
-    { name: 'プールの じゅんび', icon: '🏊', type: 'pack', verb: 'ireru', steps: ['pack:みずぎ', 'pack:タオル', 'pack:ぼうし', 'pack:ゴーグル', 'pack:ビニールぶくろ'] },
-    { name: 'しゅくはく の にもつ', icon: '🏕️', type: 'pack', verb: 'ireru', steps: ['pack:パジャマ', 'pack:きがえ', 'pack:はブラシ', 'pack:タオル', 'pack:しおり', 'pack:くすり', 'pack:ビニールぶくろ'] },
-    { name: 'きりかえ', icon: '🌈', type: 'seq', steps: ['kimochi:タブレットを おわれた', 'souji:おもちゃを かたづける', 'kimochi:つぎの かつどうに いけた'] },
-    { name: 'あいさつ', icon: '🙋', type: 'seq', steps: ['kotoba:「おはよう」を いう', 'kotoba:「ありがとう」を いう', 'kotoba:「さようなら」を いう'] },
-    { name: 'じぶんで つくる', icon: '✏️', type: 'seq', steps: [] }
+    { g: 'shitaku', name: 'あさの したく', icon: '🌅', type: 'seq', steps: ['asa:くつを はきかえる', 'asa:あいさつを する', 'asa:れんらくちょうを だす', 'asa:すいとうを おく', 'asa:タオルを かける', 'asa:リュックを しまう', 'seiketsu:トイレに いく', 'seiketsu:てを あらう'] },
+    { g: 'shitaku', name: 'かえりの したく', icon: '🌇', type: 'pack', verb: 'ireru', steps: ['pack:れんらくちょう', 'pack:すいとう', 'pack:タオル', 'pack:ハンカチ', 'pack:きがえ', 'pack:プリント'] },
+    { g: 'shitaku', name: 'あさ リュックから だす', icon: '🎒', type: 'pack', verb: 'dasu', steps: ['pack:れんらくちょう', 'pack:すいとう', 'pack:タオル', 'pack:きがえ', 'pack:しゅくだい'] },
+    { g: 'shitaku', name: 'あしたの もちもの', icon: '✅', type: 'pack', verb: 'motsu', steps: ['pack:ハンカチ', 'pack:ティッシュ', 'pack:すいとう', 'pack:れんらくちょう', 'pack:マスク'] },
+    { g: 'shitaku', name: 'きゅうしょく', icon: '🍱', type: 'seq', steps: ['seiketsu:てを あらう', 'kyushoku:エプロンを きる', 'kyushoku:「いただきます」を いう', 'kyushoku:すわって たべる', 'kyushoku:「ごちそうさま」を いう', 'kyushoku:しょっきを かたづける', 'seiketsu:はみがきを する'] },
+    { g: 'shitaku', name: 'トイレ', icon: '🚽', type: 'seq', steps: ['seiketsu:トイレに いく', 'seiketsu:かみで ふく', 'seiketsu:トイレを ながす', 'seiketsu:てを あらう', 'seiketsu:てを ふく'] },
+    { g: 'shitaku', name: 'きがえ', icon: '👕', type: 'seq', steps: ['mi:ふくを きがえる', 'mi:ボタンを とめる', 'mi:シャツを ズボンに いれる', 'mi:ふくを たたむ', 'mi:くつしたを はく'] },
+    { g: 'shitaku', name: 'そうじ', icon: '🧹', type: 'seq', steps: ['souji:つくえを はこぶ', 'souji:ほうきで はく', 'souji:ぞうきんがけ', 'souji:ごみを すてる', 'souji:つくえを はこぶ'] },
+    { g: 'shitaku', name: 'プールの じゅんび', icon: '🏊', type: 'pack', verb: 'ireru', steps: ['pack:みずぎ', 'pack:タオル', 'pack:ぼうし', 'pack:ゴーグル', 'pack:ビニールぶくろ'] },
+    { g: 'shitaku', name: 'しゅくはく の にもつ', icon: '🏕️', type: 'pack', verb: 'ireru', steps: ['pack:パジャマ', 'pack:きがえ', 'pack:はブラシ', 'pack:タオル', 'pack:しおり', 'pack:くすり', 'pack:ビニールぶくろ'] },
+    { g: 'katsudo', name: 'じゅぎょうの はじまり', icon: '🔔', type: 'seq', steps: ['jiritsu:スケジュールを みる', 'gakkou:ノートを だす', 'gakkou:いすに すわって まつ', 'gakkou:せんせいを みる', 'gakkou:「はい」と へんじを する'] },
+    { g: 'katsudo', name: 'べんきょう', icon: '📚', type: 'seq', steps: ['benkyou:なまえを よむ', 'benkyou:ひらがなを なぞる', 'benkyou:かずを かぞえる', 'benkyou:ドリルを 1まい', 'kotoba:「おわりました」を いう', 'gakkou:どうぐを しまう'] },
+    { g: 'katsudo', name: 'おんがく', icon: '🎵', type: 'seq', steps: ['ongaku:うたを うたう', 'ongaku:てびょうし', 'ongaku:たいこを たたく', 'ongaku:あいずで とめる', 'ongaku:がっきを かたづける'] },
+    { g: 'katsudo', name: 'ずこう', icon: '🎨', type: 'seq', steps: ['zukou:しんぶんしを しく', 'zukou:えを かく', 'zukou:はさみで きる', 'zukou:のりで はる', 'zukou:なまえを かく', 'zukou:どうぐを かたづける', 'zukou:つくえを ふく'] },
+    { g: 'katsudo', name: 'たいいく', icon: '🤸', type: 'seq', steps: ['mi:ふくを きがえる', 'undou:せいれつ・たいけい', 'undou:じゅんび たいそう', ['undou:はしる', 2, 'しゅう'], ['undou:ボールを なげる', 5], 'undou:サーキット'] },
+    { g: 'katsudo', name: 'さぎょう がくしゅう', icon: '🛠️', type: 'seq', steps: ['sagyou:さぎょうふくに きがえる', 'sagyou:てじゅんしょを みる', ['sagyou:ふくろに つめる', 10, 'こ'], 'sagyou:けんぴん（たしかめる）', 'sagyou:「できました」と ほうこく', 'sagyou:どうぐを もとに もどす'] },
+    { g: 'katsudo', name: 'ふくろづめ 10こ', icon: '🛍️', type: 'count', steps: [['sagyou:ふくろに つめる', 10, 'こ']] },
+    { g: 'katsudo', name: 'のうえん げい', icon: '🥕', type: 'seq', steps: ['sagyou:ぼうし・エプロンを つける', 'sagyou:はたけに みずやり', 'sagyou:くさとり', 'sagyou:しゅうかく', 'sagyou:どうぐを もとに もどす', 'seiketsu:てを あらう'] },
+    { g: 'katsudo', name: 'ちょうり', icon: '🍳', type: 'seq', steps: ['chouri:てを あらう', 'chouri:エプロンと さんかくきん', 'chouri:やさいを あらう', 'chouri:ほうちょうで きる', 'chouri:まぜる', 'chouri:おさらに もる', 'chouri:「いただきます」を いう', 'chouri:あらいもの', 'chouri:テーブルを ふく'] },
+    { g: 'katsudo', name: 'じりつ かつどう', icon: '🧩', type: 'seq', steps: ['jiritsu:スケジュールを みる', 'jiritsu:ボタンの れんしゅう', 'jiritsu:ペグさし', 'jiritsu:せんを なぞる', 'jiritsu:しんこきゅう'] },
+    { g: 'katsudo', name: 'あそびの じかん', icon: '🎲', type: 'seq', steps: ['asobi:「いれて」と いう', 'asobi:かわりばんこ', 'asobi:ともだちと あそぶ', 'kimochi:おわりの じかんに やめられた', 'asobi:あそびを かたづける'] },
+    { g: 'katsudo', name: 'かいもの がくしゅう', icon: '🛒', type: 'seq', steps: ['gyouji:バスに のる', 'soto:しんごうを まもる', 'soto:かいものを する', 'soto:おかねを はらう', 'kotoba:「ありがとう」を いう'] },
+    { g: 'katsudo', name: 'えんそくの にもつ', icon: '🚌', type: 'pack', verb: 'ireru', steps: ['pack:おべんとう', 'pack:すいとう', 'pack:ハンカチ', 'pack:レジャーシート', 'pack:ぼうし', 'pack:しおり', 'pack:ビニールぶくろ'] },
+    { g: 'katsudo', name: 'ひなん くんれん', icon: '🚨', type: 'seq', steps: ['gyouji:「おはしも」を まもる', 'gakkou:せんせいの はなしを きく', 'gakkou:ならぶ', 'soto:てを つないで あるく', 'gakkou:しずかに まつ'] },
+    { g: 'katsudo', name: 'ぜんこう ちょうかい・しき', icon: '🎌', type: 'seq', steps: ['gakkou:ならぶ', 'gyouji:しきの あいだ すわる', 'gakkou:しずかに まつ', 'gakkou:せんせいの はなしを きく', 'gakkou:ならぶ'] },
+    { g: 'kokoro', name: 'あるこう', icon: '🚶', type: 'count', steps: [['undou:あるく', 5, 'しゅう']] },
+    { g: 'kokoro', name: 'うんどう', icon: '🏃', type: 'seq', steps: [['undou:ストレッチ', 1], ['undou:ジャンプ', 10], ['undou:なわとび', 10], ['undou:はしる', 2, 'しゅう']] },
+    { g: 'kokoro', name: 'きりかえ', icon: '🌈', type: 'seq', steps: ['kimochi:タブレットを おわれた', 'souji:おもちゃを かたづける', 'kimochi:つぎの かつどうに いけた'] },
+    { g: 'kokoro', name: 'あいさつ', icon: '🙋', type: 'seq', steps: ['kotoba:「おはよう」を いう', 'kotoba:「ありがとう」を いう', 'kotoba:「さようなら」を いう'] },
+    { g: 'kokoro', name: 'じぶんで つくる', icon: '✏️', type: 'seq', steps: [] }
   ];
 
   const CHARACTERS = ['🐶', '🐱', '🐰', '🐻', '🐼', '🐧', '🦁', '🦖', '🦄', '🚗', '🚃', '🚀'];
   const ICONS = ['🐰', '🐻', '🐼', '🐱', '🐶', '🦊', '🐸', '🐧', '🐯', '🐨', '🐵', '🦁', '🐹', '🐮', '🐷', '🐤'];
-  const CH_ICONS = ['🌅', '🌇', '🎒', '✅', '🍱', '🚽', '👕', '🧹', '🚶', '🏃', '🏊', '🏕️', '🌈', '🙋', '⭐', '💪', '📚', '🎵'];
+  const CH_ICONS = ['🌅', '🌇', '🎒', '✅', '🍱', '🚽', '👕', '🧹', '🚶', '🏃', '🏊', '🏕️', '🌈', '🙋', '⭐', '💪', '📚', '🎵',
+    '🔔', '🎨', '🤸', '🛠️', '🛍️', '🥕', '🍳', '🧩', '🎲', '🛒', '🚌', '🚨', '🎌', '🎭', '🎂', '🎹'];
   const STICKERS = ['🌟', '🦄', '🌈', '🍀', '🐬', '🦋', '🌻', '🍓', '🎈', '🚀', '🐳', '🦕', '🍩', '🎸', '🏆', '🌙', '🐞', '🍉', '🐙', '🦜',
     '🎠', '🧁', '🌷', '🐝', '🦒', '🍭', '⛄', '🎡', '🐢', '👑', '🦩', '🍒', '🪐', '🦔', '🐠', '🍦', '🎨', '🛸', '🦀', '🌵'];
   const PRAISES = ['すごい！', 'やったね！', 'かっこいい！', 'いいね！', 'その ちょうし！', 'えらい！', 'じょうず！', 'ばっちり！'];
@@ -1203,8 +1263,8 @@
       h('button', { type: 'button', class: 'mini', 'aria-label': 'コピー', onclick: () => change(() => { const cp = JSON.parse(JSON.stringify(c)); cp.id = 'c' + uid(); cp.name += '（コピー）'; P.challenges.splice(i + 1, 0, cp); }) }, '⧉'),
       h('button', { type: 'button', class: 'mini warn', 'aria-label': 'けす', onclick: () => { if (confirm('「' + c.name + '」を けしますか？')) change(() => { P.challenges.splice(i, 1); if (editCid === c.id) editCid = null; }); } }, '✕')));
     const tplBox = tplOpen ? h('div', { class: 'picker' }, h('div', { class: 'note' }, 'ひな形を えらぶと、あとから 自由に かえられます'),
-      h('div', { class: 'tpls' }, TEMPLATES.map(t => h('button', { type: 'button', class: 'tpl', onclick: () => change(() => { const c = fromTemplate(t); P.challenges.push(c); editCid = c.id; tplOpen = false; }) },
-        h('span', { class: 'ic' }, t.icon), h('span', null, t.name, h('small', null, TYPES[t.type].name + (t.steps.length ? '・' + t.steps.length + 'こ' : ''))))))) : null;
+      TPL_GROUPS.map(g => [h('div', { class: 'tplg' }, g.e + ' ' + g.name), h('div', { class: 'tpls' }, TEMPLATES.filter(t => t.g === g.id).map(t => h('button', { type: 'button', class: 'tpl', onclick: () => change(() => { const c = fromTemplate(t); P.challenges.push(c); editCid = c.id; tplOpen = false; }) },
+        h('span', { class: 'ic' }, t.icon), h('span', null, t.name, h('small', null, TYPES[t.type].name + (t.steps.length ? '・' + t.steps.length + 'こ' : ''))))))])) : null;
     const chSec = [
       sec('チャレンジ（' + P.name + '）', '子どもは この中から えらびます（1つだけなら すぐ はじまります）。「じゅんばん」は手順表、「もちもの」は リュックに いれる・だす チェック、「かいすう」は おなじ ことの くりかえし に むいています。'),
       h('div', { class: 'chlist' }, chList.length ? chList : h('div', { class: 'note' }, 'まだ ありません')),
