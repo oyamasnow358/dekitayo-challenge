@@ -152,6 +152,14 @@
   .play-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; }
   .undo { position: relative; border: none; background: transparent; font-size: 17px; padding: 12px 14px; opacity: .45; border-radius: 12px; }
   .undo.pressing { opacity: 1; background: #fff; }
+  .foot-l { display: flex; align-items: center; gap: 4px; }
+  .quit { position: relative; overflow: hidden; border: 2px solid #DEE2E6; background: #fff; color: #868E96; font-size: 16px; font-weight: 700; padding: 10px 14px; border-radius: 999px; -webkit-user-select: none; user-select: none; touch-action: none; }
+  .quit i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #FFE3E3; z-index: 0; }
+  .quit span { position: relative; z-index: 1; }
+  .quit.pressing { color: #E03131; border-color: #FFA8A8; }
+  .quit.pressing i { width: 100%; transition: width 1.5s linear; }
+  .stopped .stop-face { font-size: clamp(80px, 14vw, 150px); line-height: 1; }
+  .stopped h1 { color: var(--main-d) !important; font-size: clamp(40px, 6vw, 72px) !important; }
   .reward-mini { display: flex; align-items: center; gap: 8px; font-size: 20px; background: #fff; border: 3px dashed var(--pink); border-radius: 999px; padding: 4px 18px 4px 6px; }
   .reward-mini .pic { width: 46px; height: 46px; }
   .reward-mini .pic .emoji { font-size: 34px; }
@@ -975,6 +983,38 @@
     draw(); clearInterval(tmrInt); tmrInt = setInterval(() => { if (!document.body.contains(el)) { clearInterval(tmrInt); return; } draw(); }, 1000);
     return el;
   }
+  // とちゅうで おわる（1.5秒 ながおし。うっかり タッチでは おわらない）
+  function quitBtn() {
+    const b = h('button', { type: 'button', class: 'quit', 'aria-label': 'とちゅうで おわる（ながおし）' }, h('i'), h('span', null, '✕ おわる（ながおし）'));
+    let t = null;
+    const cancel = () => { clearTimeout(t); t = null; b.classList.remove('pressing'); };
+    b.addEventListener('pointerdown', e => { e.preventDefault(); b.classList.add('pressing'); t = setTimeout(() => { cancel(); quitSession(); }, 1500); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, cancel));
+    b.addEventListener('contextmenu', e => e.preventDefault());
+    return b;
+  }
+  function quitSession() {
+    if (!session) return home();
+    clearInterval(tmrInt);
+    const p = store.profiles.find(x => x.id === session.pid) || curProfile();
+    const total = session.type === 'pack' ? session.acts.length : session.marks.length, done = session.done || 0;
+    if (done > 0) {
+      p.log.push({ d: today(), at: new Date(session.t).toTimeString().slice(0, 5), cid: session.cid, name: session.cname, n: done + '/' + total, sec: Math.round((Date.now() - session.t) / 1000), stop: 1 });
+      if (p.log.length > 500) p.log = p.log.slice(-500);
+      persist();
+    }
+    session = null; saveSession(); releaseWake();
+    screen = 'stopped'; updateChip(); sfx.tap();
+    setView('goal stopped', [
+      h('div', { class: 'stop-face' }, S().character),
+      h('h1', null, 'きょうは ここまで'),
+      h('div', { class: 'sub' }, done > 0 ? done + 'こ できたね。また やろうね！' : 'また こんど やろうね！'),
+      h('div', { class: 'actions' },
+        h('button', { type: 'button', class: 'big-btn go', onclick: () => { if (tapOk(600)) { sfx.tap(); finish(); } } }, '🏠 もどる'))
+    ]);
+    speak(done > 0 ? 'きょうは ここまで。' + done + 'こ できたね。' : 'きょうは ここまで。また やろうね。');
+    lock(800);
+  }
   function undoBtn(fn) {
     const b = h('button', { type: 'button', class: 'undo' }, '↩ ひとつ もどす（ながおし）');
     let t = null;
@@ -1016,7 +1056,7 @@
       h('div', { class: 'mission-bar' }, h('div', { class: 'mtext', id: 'mtext' }), h('div', { class: 'remain', id: 'remain' })),
       trackEl,
       h('div', { class: 'play-main' }, h('div', { class: 'act-card', id: 'actCard' }), btn),
-      h('div', { class: 'play-foot' }, undoBtn(undoStep), timerEl(),
+      h('div', { class: 'play-foot' }, h('div', { class: 'foot-l' }, quitBtn(), undoBtn(undoStep)), timerEl(),
         session.reward ? h('div', { class: 'reward-mini' }, makePic(session.reward), 'ごほうび：' + session.reward.name) : h('span'))
     ]);
     updatePlay(false); lock(500);
@@ -1099,7 +1139,7 @@
     setView('pack', [
       h('div', { class: 'mission-bar' }, h('div', { class: 'mtext' }, v.head), h('div', { class: 'remain', id: 'remain' })),
       h('div', { class: 'pack-main' }, items, h('div', { class: 'bagbox' }, h('div', { class: 'bag', id: 'bag' }, v.bag), h('div', { class: 'bagcnt', id: 'bagcnt' }))),
-      h('div', { class: 'play-foot' }, undoBtn(undoPack), timerEl(),
+      h('div', { class: 'play-foot' }, h('div', { class: 'foot-l' }, quitBtn(), undoBtn(undoPack)), timerEl(),
         session.reward ? h('div', { class: 'reward-mini' }, makePic(session.reward), 'ごほうび：' + session.reward.name) : h('span'))
     ]);
     updatePack(); lock(500);
@@ -1210,7 +1250,7 @@
     else if (screen === 'pack' && session) renderPack();
     else if (screen === 'who') renderWho();
     else if (screen === 'book') renderBook();
-    else if (screen === 'goal') { /* そのまま */ }
+    else if (screen === 'goal' || screen === 'stopped') { /* そのまま */ }
     else home();
   }
   function refresh() { const m = $('#settings'), st = m.scrollTop; renderSettings(); m.scrollTop = st; }
@@ -1299,7 +1339,7 @@
       sec('きろく（' + P.name + '）', 'クリアした 日・時刻・かかった時間を 記録します。個別の指導計画の評価に つかえます。'),
       h('div', { class: 'status' }, Object.keys(week).length ? 'この1週間：' + Object.keys(week).map(k => k + ' ' + week[k] + '回').join('、') : 'この1週間の きろくは まだ ありません'),
       logs.length ? h('table', { class: 'log' }, h('tr', null, h('th', null, '日にち'), h('th', null, '時刻'), h('th', null, 'チャレンジ'), h('th', null, 'こ'), h('th', null, 'かかった時間')),
-        logs.slice(0, 30).map(l => h('tr', null, h('td', null, l.d), h('td', null, l.at || ''), h('td', null, l.name), h('td', null, l.n), h('td', null, fmtSec(l.sec || 0))))) : null,
+        logs.slice(0, 30).map(l => h('tr', null, h('td', null, l.d), h('td', null, l.at || ''), h('td', null, l.name + (l.stop ? '（とちゅうまで）' : '')), h('td', null, l.n), h('td', null, fmtSec(l.sec || 0))))) : null,
       h('div', { class: 'btns' },
         h('button', { type: 'button', class: 'btn', onclick: () => exportCsv(P) }, '⬇ きろくを CSV で かきだす（Excel 用）'),
         h('button', { type: 'button', class: 'btn warn', onclick: () => { if (confirm(P.name + 'の きろくを けしますか？')) change(() => { P.log = []; }); } }, 'きろくを けす'))
@@ -1436,7 +1476,7 @@
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   }
   function exportCsv(P) {
-    const rows = [['なまえ', '日にち', '時刻', 'チャレンジ', 'こ', 'かかった秒']].concat(P.log.map(l => [P.name, l.d, l.at || '', l.name, l.n, l.sec || 0]));
+    const rows = [['なまえ', '日にち', '時刻', 'チャレンジ', 'こ', 'かかった秒']].concat(P.log.map(l => [P.name, l.d, l.at || '', l.name + (l.stop ? '（とちゅうまで）' : ''), l.n, l.sec || 0]));
     download('dekitayo-' + P.name + '-' + today() + '.csv', '﻿' + rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n'), 'text/csv');
   }
   function exportAll() { download('dekitayo-' + today() + '.json', JSON.stringify({ app: 'dekitayo-challenge', version: 1, store: store }), 'application/json'); }
